@@ -1,0 +1,88 @@
+/* LFO / Automation tab quick styles (for arrangement.html) */
+
+.lfo-tabs {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.lfo-tab {
+    flex: 1;
+    padding: 8px 12px;
+    background-color: #2a2a2a;
+    color: #888;
+    border: 1px solid #444;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.lfo-tab:hover { background-color: #333; color: #aaa; }
+
+.lfo-tab.active {
+    background-color: #3F51B5;
+    color: white;
+    border-color: #3F51B5;
+    box-shadow: 0 2px 8px rgba(63, 81, 181, 0.4);
+}
+
+.lfo-tab[data-lfo="1"].active { background-color: #3F51B5; border-color: #3F51B5; }
+.lfo-tab[data-lfo="2"].active { background-color: #E91E63; border-color: #E91E63; }
+.lfo-tab[data-lfo="3"].active { background-color: #00BCD4; border-color: #00BCD4; }
+.lfo-tab[data-lfo="4"].active { background-color: #FF9800; border-color: #FF9800; }
+
+.lfo-panel { display: none; }
+.lfo-panel.active { display: block; }
+
+/* Automation tabs (basic) */
+.automation-tabs { display: flex; gap: 5px; margin-bottom: 12px; }
+.automation-tab { flex: 1; padding: 6px 10px; background:#2a2a2a; color:#888; border:1px solid #444; border-radius:4px; cursor:pointer; }
+.automation-tab.active { background:#4CAF50; color:#fff; border-color:#4CAF50; }
+.automation-panel { display: none; }
+.automation-panel.active { display:block; }
+
+/* Popup container styling to match PsychologicalStudio theme */
+.effects-popup {
+    display: none;
+    position: fixed;
+    background: linear-gradient(135deg, #121220 0%, #0a0a0f 100%);
+    color: #f0f0f0;
+    border: 1px solid #333;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.6);
+    border-radius: 8px;
+    padding: 12px;
+    z-index: 2000;
+    align-items: stretch;
+    justify-content: center;
+}
+
+.popup-content {
+    overflow-y: auto;
+    max-height: 80vh;
+}
+
+.popup-footer {
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    margin-top: 12px;
+}
+
+.arr-btn-apply, .arr-btn-reset, #arr-effects-close-btn {
+    padding: 8px 12px;
+    background: #2a2a2a;
+    color: #fff;
+    border: 1px solid #444;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.arr-btn-apply:hover { background: #3a3a3a; }
+.arr-btn-reset:hover { background: #3a3a3a; }
+
+.effects-popup h4 {
+    color: #dcdcff;
+    margin-bottom: 8px;
+}

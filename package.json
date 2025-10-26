@@ -1,0 +1,235 @@
+{
+    "name": "psychological-studio",
+    "version": "3.0.0",
+    "description": "Professional audio production studio - Optimized for mobile and desktop",
+    "main": "electron-main.js",
+    "scripts": {
+        "start": "electron electron-main.js",
+        "dev": "electron electron-main.js",
+        "license-server": "node license-backend.js",
+        "dev-full": "concurrently \"npm run license-server\" \"npm run dev\"",
+    "build": "electron-builder --config.directories.output=build-artifacts",
+    "prebuild-win": "node ./scripts/cleanBuildArtifacts.js",
+    "build-win": "electron-builder --win --config.directories.output=build-artifacts",
+        "build-mac": "electron-builder --mac",
+        "build-linux": "electron-builder --linux",
+        "pack": "electron-builder --dir",
+        "dist": "electron-builder",
+        "serve": "npx http-server -p 8080 -c-1",
+        "cap:init": "npx cap init \"Psychological Studio\" \"com.psychological.studio\" --web-dir=.",
+        "cap:add:ios": "npm install @capacitor/ios && npx cap add ios",
+        "cap:add:android": "npm install @capacitor/android && npx cap add android",
+        "cap:sync": "npx cap sync",
+        "cap:open:ios": "npx cap open ios",
+        "cap:open:android": "npx cap open android",
+        "cap:build:ios": "npx cap sync ios && npx cap open ios",
+        "cap:build:android": "npx cap sync android && npx cap open android",
+        "cap:run:ios": "npx cap run ios",
+        "cap:run:android": "npx cap run android",
+        "lighthouse": "npx lighthouse http://localhost:8080 --view",
+        "test:performance": "node performance-test.js"
+    },
+    "author": "Psypower Studios",
+    "license": "MIT",
+    "copyright": "Copyright © 2025 Psypower Studios. All rights reserved.",
+    "dependencies": {
+        "@capacitor-community/keep-awake": "^5.0.0",
+        "@capacitor/android": "^5.5.0",
+        "@capacitor/app": "^5.0.6",
+        "@capacitor/core": "^5.5.0",
+        "@capacitor/filesystem": "^5.1.4",
+        "@capacitor/haptics": "^5.0.6",
+        "@capacitor/ios": "^5.5.0",
+        "@capacitor/keyboard": "^5.0.6",
+        "@capacitor/local-notifications": "^5.0.6",
+        "@capacitor/share": "^5.0.6",
+        "@capacitor/splash-screen": "^5.0.6",
+        "@capacitor/status-bar": "^5.0.6",
+        "bcryptjs": "^3.0.2",
+        "body-parser": "^2.2.0",
+        "cors": "^2.8.5",
+        "electron-is-dev": "^2.0.0",
+        "express": "^5.1.0",
+        "jsonwebtoken": "^9.0.2"
+    },
+    "devDependencies": {
+        "@capacitor/cli": "^5.5.0",
+        "electron": "^25.0.0",
+        "electron-builder": "^24.0.0",
+        "http-server": "^14.1.1",
+        "lighthouse": "^11.0.0"
+    },
+    "build": {
+        "appId": "com.psychological.studio",
+        "productName": "Psychological Studio",
+        "copyright": "Copyright © 2025 Psypower Studios. All rights reserved.",
+        "asar": true,
+        "asarUnpack": [
+            "**/*.node"
+        ],
+        "compression": "maximum",
+        "directories": {
+            "output": "build-artifacts",
+            "buildResources": "."
+        },
+        "files": [
+            "electron-main.js",
+            "electron-preload.js",
+            "electron-nav.js",
+            "PsychologicalStudio.html",
+            "arrangement.html",
+            "ABOUTPS.html",
+            "Screenshots/**/*",
+            "security-updated.js",
+            "folder-management.js",
+            "folder-audio-loader.js",
+            "production-logger.js",
+            "error-handler.js",
+            "notification-system.js",
+            "keyboard-shortcuts.js",
+            "undo-redo-system.js",
+            "auto-save-system.js",
+            "performance-monitor.js",
+            "performance-optimizer.js",
+            "loading-states.js",
+            "crash-recovery-system.js",
+            "live-performance.js",
+            "PsychologicalStudio/**/*",
+            "NewRelease/**/*",
+            "arrangement_styles/**/*",
+            "arrangement.js",
+            "arrangement-export.js",
+            "automation-lfo-system.js",
+            "eq-system.js",
+            "icon.png",
+            "icon.ico",
+            "manifest.json",
+            "!**/*.md",
+            "!**/*.txt",
+            "!**/*.ps1",
+            "!**/*.sh",
+            "!backup/**",
+            "!dist/**",
+            "!.git/**",
+            "!.github/**",
+            "!node_modules/.cache/**",
+            "!*.log",
+            "!*.bak",
+            "!*.recovery.*",
+            "!test-*",
+            "!fl-studio-*",
+            "!BUILD_*",
+            "!MAC_*",
+            "!EASY_*",
+            "!PUSH_*",
+            "!START_*",
+            "!DEPLOYMENT_*",
+            "!DISTRIBUTION_*",
+            "!ELECTRON_*",
+            "!DOCUMENTATION_*",
+            "!DUAL_*",
+            "!EXE_*",
+            "!FINAL_*",
+            "!FOLDER_*",
+            "!HOTFIX_*",
+            "!INSTALLATION_*",
+            "!NAVIGATION_*",
+            "!PLAYHEAD_*",
+            "!RELEASE_*",
+            "!SESSION_*",
+            "!*.HOTFIX_*",
+            "!PSSS/**",
+            "!PsychologicalStudio/**/*.bak",
+            "!USER_GUIDE.html",
+            "!SCREENSHOT_GUIDE.html",
+            "!canveff.html",
+            "!PSinfo.html",
+            "!security2.html",
+            "!arr-effects-popup-full.html"
+        ],
+        "win": {
+            "target": [
+                {
+                    "target": "nsis",
+                    "arch": [
+                        "x64"
+                    ]
+                }
+            ],
+            "icon": "icon.ico",
+            "requestedExecutionLevel": "asInvoker"
+        },
+        "nsis": {
+            "oneClick": false,
+            "allowToChangeInstallationDirectory": true,
+            "createDesktopShortcut": true,
+            "createStartMenuShortcut": true,
+            "shortcutName": "Psychological Studio",
+            "perMachine": false,
+            "license": "license.txt",
+            "installerIcon": "icon.ico",
+            "uninstallerIcon": "icon.ico",
+            "installerHeaderIcon": "icon.ico",
+            "deleteAppDataOnUninstall": false,
+            "runAfterFinish": true,
+            "menuCategory": true,
+            "artifactName": "${productName}-Setup-${version}.${ext}"
+        },
+        "mac": {
+            "target": [
+                {
+                    "target": "dmg",
+                    "arch": [
+                        "x64",
+                        "arm64"
+                    ]
+                }
+            ],
+            "icon": "icon.png",
+            "category": "public.app-category.music",
+            "hardenedRuntime": true,
+            "gatekeeperAssess": false,
+            "entitlements": "entitlements.mac.plist",
+            "entitlementsInherit": "entitlements.mac.plist",
+            "type": "distribution",
+            "minimumSystemVersion": "10.13.0",
+            "darkModeSupport": true,
+            "extendInfo": {
+                "NSMicrophoneUsageDescription": "Psychological Studio requires microphone access for audio recording features.",
+                "NSAppleEventsUsageDescription": "Psychological Studio requires access to system events for audio processing."
+            }
+        },
+        "dmg": {
+            "title": "Psychological Studio ${version}",
+            "iconSize": 100,
+            "contents": [
+                {
+                    "x": 380,
+                    "y": 180,
+                    "type": "link",
+                    "path": "/Applications"
+                },
+                {
+                    "x": 122,
+                    "y": 180,
+                    "type": "file"
+                }
+            ],
+            "window": {
+                "width": 540,
+                "height": 380
+            },
+            "backgroundColor": "#1a1a2e",
+            "format": "ULFO",
+            "sign": false
+        },
+        "linux": {
+            "target": [
+                "AppImage",
+                "deb"
+            ],
+            "icon": "icon.png",
+            "category": "Audio"
+        }
+    }
+}

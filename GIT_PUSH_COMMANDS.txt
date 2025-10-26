@@ -1,0 +1,29 @@
+# Run these commands in PowerShell (one by one)
+
+# Navigate to your project
+cd "d:\PSYSTUDIO APP\Psypower-main - Copy - Copy"
+
+# Add GitHub as remote (CHANGE USERNAME IF DIFFERENT)
+git remote add origin https://github.com/psypower999/Psychological-Studio.git
+
+# Set branch to main
+git branch -M main
+
+# Push to GitHub (you'll be asked for username and password)
+git push -u origin main
+
+# When prompted:
+# Username: psypower999
+# Password: Use a Personal Access Token (NOT your password!)
+
+# To get a Personal Access Token:
+# 1. Go to GitHub.com
+# 2. Click your profile picture → Settings
+# 3. Scroll down → Developer settings
+# 4. Personal access tokens → Tokens (classic)
+# 5. Generate new token (classic)
+# 6. Name it: "Psychological Studio"
+# 7. Check: repo (all checkboxes)
+# 8. Click Generate token
+# 9. COPY THE TOKEN (you won't see it again!)
+# 10. Use this token instead of password when pushing

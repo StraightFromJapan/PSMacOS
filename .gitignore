@@ -1,0 +1,54 @@
+# Node modules
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build outputs
+dist/
+build/
+out/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Cache
+.cache/
+.npm/
+.eslintcache
+
+# Backup files
+*.bak
+*.backup
+*.recovery.*
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Capacitor
+android/
+ios/
+.capacitor/
+
+# Package lock (we're using legacy-peer-deps)
+package-lock.json

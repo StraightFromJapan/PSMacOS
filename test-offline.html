@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychological Studio - Offline Test</title>
+    <style>
+        body {
+            background: #1a1a2e;
+            color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            text-align: center;
+        }
+        .test-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #444;
+        }
+        .test-item {
+            margin: 10px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 5px;
+            text-align: left;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .success { color: #4CAF50; }
+        .error { color: #f44336; }
+        .warning { color: #ff9800; }
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Psychological Studio - Offline Test</h1>
+        <p>This page tests the offline functionality of your Psychological Studio app.</p>
+        
+        <div class="test-item">
+            <h3>Service Worker Status</h3>
+            <div id="swStatus" class="status">Checking...</div>
+        </div>
+        
+        <div class="test-item">
+            <h3>Cache Status</h3>
+            <div id="cacheStatus" class="status">Checking...</div>
+        </div>
+        
+        <div class="test-item">
+            <h3>Local Storage</h3>
+            <div id="storageStatus" class="status">Checking...</div>
+        </div>
+        
+        <div class="test-item">
+            <h3>Audio Files</h3>
+            <div id="audioStatus" class="status">Checking...</div>
+        </div>
+        
+        <div class="test-item">
+            <h3>Network Status</h3>
+            <div id="networkStatus" class="status">Checking...</div>
+        </div>
+        
+        <div style="margin-top: 20px;">
+            <button onclick="runTests()">🔄 Run Tests</button>
+            <button onclick="clearCache()">🗑️ Clear Cache</button>
+            <button onclick="window.location.href='./PsychologicalStudio.html'">🎵 Open Studio</button>
+        </div>
+        
+        <div id="testResults" style="margin-top: 20px; text-align: left;"></div>
+    </div>
+
+    <script>
+        async function runTests() {
+            const results = document.getElementById('testResults');
+            results.innerHTML = '<h3>Test Results:</h3>';
+            
+            // Test Service Worker
+            try {
+                if ('serviceWorker' in navigator) {
+                    const registration = await navigator.serviceWorker.getRegistration();
+                    if (registration) {
+                        document.getElementById('swStatus').innerHTML = '<span class="success">✅ Active</span>';
+                        results.innerHTML += '<div class="success">✅ Service Worker is registered and active</div>';
+                    } else {
+                        document.getElementById('swStatus').innerHTML = '<span class="error">❌ Not Registered</span>';
+                        results.innerHTML += '<div class="error">❌ Service Worker not registered</div>';
+                    }
+                } else {
+                    document.getElementById('swStatus').innerHTML = '<span class="error">❌ Not Supported</span>';
+                    results.innerHTML += '<div class="error">❌ Service Worker not supported</div>';
+                }
+            } catch (error) {
+                document.getElementById('swStatus').innerHTML = '<span class="error">❌ Error</span>';
+                results.innerHTML += `<div class="error">❌ Service Worker error: ${error.message}</div>`;
+            }
+            
+            // Test Cache
+            try {
+                const cacheNames = await caches.keys();
+                const cacheCount = cacheNames.length;
+                document.getElementById('cacheStatus').innerHTML = `<span class="success">✅ ${cacheCount} caches found</span>`;
+                results.innerHTML += `<div class="success">✅ Found ${cacheCount} caches: ${cacheNames.join(', ')}</div>`;
+                
+                // Check specific caches
+                for (const cacheName of cacheNames) {
+                    const cache = await caches.open(cacheName);
+                    const keys = await cache.keys();
+                    results.innerHTML += `<div class="success">  📁 ${cacheName}: ${keys.length} files cached</div>`;
+                }
+            } catch (error) {
+                document.getElementById('cacheStatus').innerHTML = '<span class="error">❌ Error</span>';
+                results.innerHTML += `<div class="error">❌ Cache error: ${error.message}</div>`;
+            }
+            
+            // Test Local Storage
+            try {
+                const storageKeys = Object.keys(localStorage);
+                const storageSize = JSON.stringify(localStorage).length;
+                document.getElementById('storageStatus').innerHTML = `<span class="success">✅ ${storageKeys.length} keys, ${(storageSize/1024).toFixed(2)}KB</span>`;
+                results.innerHTML += `<div class="success">✅ Local Storage: ${storageKeys.length} keys, ${(storageSize/1024).toFixed(2)}KB used</div>`;
+                
+                // Check for Psychological Studio data
+                const studioKeys = storageKeys.filter(key => key.includes('psychological-studio'));
+                if (studioKeys.length > 0) {
+                    results.innerHTML += `<div class="success">  🎵 Studio data found: ${studioKeys.join(', ')}</div>`;
+                } else {
+                    results.innerHTML += `<div class="warning">  ⚠️ No studio data found yet</div>`;
+                }
+            } catch (error) {
+                document.getElementById('storageStatus').innerHTML = '<span class="error">❌ Error</span>';
+                results.innerHTML += `<div class="error">❌ Storage error: ${error.message}</div>`;
+            }
+            
+            // Test Audio Files
+            try {
+                const audioFiles = [
+                    './mykicks/1.wav', './mykicks/2.wav', './media/170bpm.mp3'
+                ];
+                let cachedAudio = 0;
+                
+                for (const audioFile of audioFiles) {
+                    try {
+                        const response = await fetch(audioFile);
+                        if (response.ok) {
+                            cachedAudio++;
+                        }
+                    } catch (error) {
+                        // File might not be cached yet
+                    }
+                }
+                
+                document.getElementById('audioStatus').innerHTML = `<span class="success">✅ ${cachedAudio}/${audioFiles.length} audio files available</span>`;
+                results.innerHTML += `<div class="success">✅ Audio files: ${cachedAudio}/${audioFiles.length} available</div>`;
+            } catch (error) {
+                document.getElementById('audioStatus').innerHTML = '<span class="error">❌ Error</span>';
+                results.innerHTML += `<div class="error">❌ Audio test error: ${error.message}</div>`;
+            }
+            
+            // Test Network Status
+            const isOnline = navigator.onLine;
+            document.getElementById('networkStatus').innerHTML = isOnline ? 
+                '<span class="success">✅ Online</span>' : 
+                '<span class="warning">⚠️ Offline</span>';
+            results.innerHTML += `<div class="${isOnline ? 'success' : 'warning'}">${isOnline ? '✅' : '⚠️'} Network: ${isOnline ? 'Online' : 'Offline'}</div>`;
+            
+            // Overall assessment
+            const allTestsPassed = document.querySelectorAll('.success').length >= 4;
+            if (allTestsPassed) {
+                results.innerHTML += '<div class="success"><h3>🎉 All tests passed! Your app is ready for offline use.</h3></div>';
+            } else {
+                results.innerHTML += '<div class="warning"><h3>⚠️ Some tests failed. Check the results above.</h3></div>';
+            }
+        }
+        
+        async function clearCache() {
+            try {
+                const cacheNames = await caches.keys();
+                await Promise.all(cacheNames.map(cacheName => caches.delete(cacheName)));
+                localStorage.clear();
+                alert('Cache and storage cleared!');
+                runTests();
+            } catch (error) {
+                alert('Error clearing cache: ' + error.message);
+            }
+        }
+        
+        // Run tests on page load
+        window.addEventListener('load', runTests);
+    </script>
+</body>
+</html>

@@ -1,0 +1,55 @@
+{
+    "name": "Psychological Studio",
+    "short_name": "PsyStudio",
+    "description": "A professional offline audio production studio",
+    "start_url": "./PsychologicalStudio.html",
+    "display": "fullscreen",
+    "background_color": "#1a1a2e",
+    "theme_color": "#1a1a2e",
+    "orientation": "landscape",
+    "scope": "./",
+    "categories": ["music", "productivity", "entertainment"],
+    "lang": "en",
+    "dir": "ltr",
+    "icons": [
+        {
+            "src": "icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon3.png",
+            "sizes": "144x144",
+            "type": "image/png"
+        },
+        {
+            "src": "icon4.png",
+            "sizes": "96x96",
+            "type": "image/png"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Open Studio",
+            "short_name": "Studio",
+            "description": "Open the main studio interface",
+            "url": "./PsychologicalStudio.html",
+            "icons": [
+                {
+                    "src": "icon.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ],
+    "prefer_related_applications": false,
+    "offline_enabled": true,
+    "related_applications": []
+}

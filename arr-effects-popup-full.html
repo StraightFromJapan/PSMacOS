@@ -1,0 +1,529 @@
+<!-- Complete Effects Popup with LFOs and Automations - Insert this into arrangement.html -->
+    <div id="arr-effects-popup" class="effects-popup">
+        <div class="popup-header">
+            <h3>Effects for <span id="arr-popup-clip-name">Clip</span></h3>
+            <button class="popup-close-btn" id="arr-effects-close-btn">Close</button>
+        </div>
+        <div class="popup-content">
+            
+            <!-- VOLUME SECTION -->
+            <div class="effect-section">
+                <h4>VOLUME</h4>
+                <div class="slider-container">
+                    <label>Gain</label>
+                    <input type="range" id="arr-sample-volume" min="0" max="200" value="100" step="1">
+                    <span id="arr-sample-volume-value">100%</span>
+                </div>
+            </div>
+
+            <!-- SPEED SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>SPEED</h4>
+                <div class="speed-selector">
+                    <label for="arr-speed-select">Speed:</label>
+                    <select id="arr-speed-select">
+                        <option value="0.03125">0.03125x</option>
+                        <option value="0.0625">0.0625x</option>
+                        <option value="0.125">0.125x</option>
+                        <option value="0.25">0.25x</option>
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- DELAY SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>DELAY</h4>
+                <div class="slider-container">
+                    <label>Time (ms)</label>
+                    <input type="range" id="arr-delay-time" min="0" max="1000" value="0" step="10">
+                    <span id="arr-delay-time-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Feedback (%)</label>
+                    <input type="range" id="arr-delay-feedback" min="0" max="100" value="0" step="1">
+                    <span id="arr-delay-feedback-value">0</span>
+                </div>
+            </div>
+
+            <!-- REVERB SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>REVERB</h4>
+                <div class="slider-container">
+                    <label>Decay (s)</label>
+                    <input type="range" id="arr-reverb-decay" min="0.1" max="5" value="0" step="0.1">
+                    <span id="arr-reverb-decay-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Pre-delay (ms)</label>
+                    <input type="range" id="arr-reverb-predelay" min="0" max="100" value="0" step="1">
+                    <span id="arr-reverb-predelay-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Diffusion (%)</label>
+                    <input type="range" id="arr-reverb-diffusion" min="0" max="100" value="50" step="1">
+                    <span id="arr-reverb-diffusion-value">50</span>
+                </div>
+                <div class="slider-container">
+                    <label>Low Cut (Hz)</label>
+                    <input type="range" id="arr-reverb-lowcut" min="20" max="1000" value="20" step="10">
+                    <span id="arr-reverb-lowcut-value">20</span>
+                </div>
+                <div class="slider-container">
+                    <label>High Cut (Hz)</label>
+                    <input type="range" id="arr-reverb-highcut" min="1000" max="20000" value="20000" step="100">
+                    <span id="arr-reverb-highcut-value">20000</span>
+                </div>
+                <div class="slider-container">
+                    <label>Damping (%)</label>
+                    <input type="range" id="arr-reverb-damping" min="0" max="100" value="50" step="1">
+                    <span id="arr-reverb-damping-value">50</span>
+                </div>
+                <div class="slider-container">
+                    <label>Wet/Dry (%)</label>
+                    <input type="range" id="arr-reverb-mix" min="0" max="100" value="0" step="1">
+                    <span id="arr-reverb-mix-value">0</span>
+                </div>
+            </div>
+
+            <!-- EQUALIZER SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>EQUALIZER</h4>
+                <div class="eq-controls">
+                    <div class="slider-container">
+                        <label>Low Shelf (dB)</label>
+                        <input type="range" id="arr-eq-low" min="-24" max="24" value="0" step="0.1">
+                        <span id="arr-eq-low-value">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Low Mid (dB)</label>
+                        <input type="range" id="arr-eq-lowmid" min="-24" max="24" value="0" step="0.1">
+                        <span id="arr-eq-lowmid-value">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>Mid (dB)</label>
+                        <input type="range" id="arr-eq-mid" min="-24" max="24" value="0" step="0.1">
+                        <span id="arr-eq-mid-value">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>High Mid (dB)</label>
+                        <input type="range" id="arr-eq-highmid" min="-24" max="24" value="0" step="0.1">
+                        <span id="arr-eq-highmid-value">0</span>
+                    </div>
+                    <div class="slider-container">
+                        <label>High Shelf (dB)</label>
+                        <input type="range" id="arr-eq-high" min="-24" max="24" value="0" step="0.1">
+                        <span id="arr-eq-high-value">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>FILTER</h4>
+                <div class="slider-container">
+                    <label>Type</label>
+                    <select id="arr-filter-type">
+                        <option value="none">None</option>
+                        <option value="lowpass">Low Pass</option>
+                        <option value="highpass">High Pass</option>
+                        <option value="bandpass">Band Pass</option>
+                        <option value="notch">Notch</option>
+                    </select>
+                </div>
+                <div class="slider-container">
+                    <label>Cutoff (Hz)</label>
+                    <input type="range" id="arr-filter-cutoff" min="20" max="20000" value="1000" step="10">
+                    <span id="arr-filter-cutoff-value">1000</span>
+                </div>
+                <div class="slider-container">
+                    <label>Resonance</label>
+                    <input type="range" id="arr-filter-resonance" min="0" max="30" value="0" step="0.1">
+                    <span id="arr-filter-resonance-value">0</span>
+                </div>
+            </div>
+
+            <!-- PITCH SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>PITCH</h4>
+                <div class="slider-container">
+                    <label>Pitch Shift (semitones)</label>
+                    <input type="range" id="arr-pitch-shift" min="-24" max="24" value="0" step="1">
+                    <span id="arr-pitch-shift-value">0</span>
+                </div>
+            </div>
+
+            <!-- LFO SECTION -->
+            <div class="effect-section lfo-section">
+                <hr color="grey">
+                <br>
+                <h4>LFO MODULATORS</h4>
+                
+                <!-- LFO Tabs -->
+                <div class="lfo-tabs">
+                    <button class="lfo-tab active" data-lfo="1">LFO 1</button>
+                    <button class="lfo-tab" data-lfo="2">LFO 2</button>
+                    <button class="lfo-tab" data-lfo="3">LFO 3</button>
+                    <button class="lfo-tab" data-lfo="4">LFO 4</button>
+                </div>
+                
+                <!-- LFO Panels (1-4) -->
+                <div class="lfo-panel active" id="arr-lfo-panel-1">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-1-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-1-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-1-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-1-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-1-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-1-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-1-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-2">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-2-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-2-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-2-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-2-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-2-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-2-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-2-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-3">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-3-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-3-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-3-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-3-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-3-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-3-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-3-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-4">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-4-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-4-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-4-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-4-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-4-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-4-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-4-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUTOMATION SECTION -->
+            <div class="effect-section automation-section">
+                <hr color="grey">
+                <br>
+                <h4>AUTOMATION</h4>
+                
+                <!-- Automation Tabs -->
+                <div class="automation-tabs">
+                    <button class="automation-tab active" data-automation="1">Auto 1</button>
+                    <button class="automation-tab" data-automation="2">Auto 2</button>
+                    <button class="automation-tab" data-automation="3">Auto 3</button>
+                    <button class="automation-tab" data-automation="4">Auto 4</button>
+                </div>
+                
+                <!-- Automation Panels (1-4) -->
+                <div class="automation-panel active" id="arr-automation-panel-1">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-1-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-1-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-1-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-1-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-1-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-1-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-1-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-1-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-1-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-2">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-2-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-2-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-2-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-2-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-2-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-2-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-2-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-2-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-2-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-3">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-3-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-3-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-3-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-3-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-3-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-3-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-3-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-3-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-3-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-4">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-4-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-4-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-4-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-4-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-4-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-4-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-4-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-4-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-4-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER BUTTONS -->
+            <div class="popup-footer">
+                <button id="arr-effects-apply-btn" class="arr-btn-apply">Apply</button>
+                <button id="arr-effects-reset-btn" class="arr-btn-reset">Reset</button>
+            </div>
+        </div>
+    </div>

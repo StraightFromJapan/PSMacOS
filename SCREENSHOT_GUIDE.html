@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Screenshot Capture Instructions</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            max-width: 900px;
+            margin: 40px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .card {
+            background: white;
+            color: #333;
+            border-radius: 15px;
+            padding: 30px;
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .step {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            padding: 20px;
+            margin: 15px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+        }
+        .step h3 {
+            color: #667eea;
+            margin-top: 0;
+        }
+        .filename {
+            background: #333;
+            color: #4CAF50;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            font-weight: bold;
+        }
+        .shortcut {
+            background: #FF9800;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            margin: 5px 0;
+        }
+        .tip {
+            background: #FFF3CD;
+            border: 2px solid #FFC107;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            color: #856404;
+        }
+        .complete {
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 1.3em;
+            font-weight: bold;
+        }
+        ul {
+            margin: 10px 0;
+            padding-left: 25px;
+        }
+        li {
+            margin: 8px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>📸 Screenshot Guide for Psychological Studio</h1>
+    
+    <div class="card">
+        <h2>🎯 Overview</h2>
+        <p>You need to capture <strong>8 screenshots</strong> of different parts of your app. Each screenshot will be displayed in the user guide to help users understand the interface.</p>
+        
+        <div class="tip">
+            <strong>💡 Quick Tip:</strong> Use Windows Snipping Tool with <span class="shortcut">Win + Shift + S</span> to capture each screenshot.
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>📁 Setup</h2>
+        <ol>
+            <li>Create folder: <code>docs\screenshots</code> in your project directory</li>
+            <li>Make sure <strong>Psychological Studio app is running</strong></li>
+            <li>Have Paint or an image editor ready to save screenshots</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h2>📸 Screenshots to Capture</h2>
+
+        <div class="step">
+            <h3>Screenshot 1: Main Studio View</h3>
+            <p><strong>Save as:</strong> <span class="filename">01-main-studio.png</span></p>
+            <p><strong>What to capture:</strong></p>
+            <ul>
+                <li>The main view with sample pads numbered 1-100</li>
+                <li>Make sure the grid of sample buttons is visible</li>
+                <li>Include the top menu bar and any side controls</li>
+            </ul>
+            <p><strong>Steps:</strong></p>
+            <ol>
+                <li>Open Psychological Studio</li>
+                <li>Press <span class="shortcut">Win + Shift + S</span></li>
+                <li>Select the entire main window</li>
+                <li>Paste into Paint (Ctrl+V)</li>
+                <li>Save as: <span class="filename">docs\screenshots\01-main-studio.png</span></li>
+            </ol>
+        </div>
+
+        <div class="step">
+            <h3>Screenshot 2: Arrangement View</h3>
+            <p><strong>Save as:</strong> <span class="filename">02-arrangement-view.png</span></p>
+            <p><strong>What to capture:</strong></p>
+            <ul>
+                <li>Click "Arrangement View" button to open the timeline</li>
+                <li>Add a few clips to the timeline so it's not empty</li>
+                <li>Show multiple tracks with clips</li>
+                <li>Include the playback controls (Play, Stop, BPM)</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Screenshot 3: Effects Popup - Basic Tab</h3>
+            <p><strong>Save as:</strong> <span class="filename">03-effects-basic.png</span></p>
+            <p><strong>What to capture:</strong></p>
+            <ul>
+                <li>In Arrangement View, right-click any clip</li>
+                <li>Select "Effects" from the menu</li>
+                <li>Make sure the <strong>Basic</strong> tab is selected</li>
+                <li>Capture the popup showing Volume, Speed, Delay, Reverb, Filter controls</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Screenshot 4: Effects Popup - EQ Tab</h3>
+            <p><strong>Save as:</strong> <span class="filename">04-effects-eq.png</span></p>
+            <p><strong>What to capture:</strong></p>
+            <ul>
+                <li>In the same Effects popup, click the <strong>EQ</strong> tab</li>
+                <li>Show the 8-band equalizer with visual canvas</li>
+                <li>Include all frequency band controls</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Screenshot 5: Effects Popup - LFO Tab</h3>
+            <p><strong>Save as:</strong> <span class="filename">05-effects-lfo.png</span></p>
+            <p><strong>What to capture:</strong></p>
+            <ul>
+                <li>Click the <strong>LFO</strong> tab in Effects popup</li>
+                <li>Show all 4 LFO controls</li>
+                <li>Include the waveform, rate, and depth settings</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Screenshot 6: Effects Popup - Automation Tab</h3>
+            <p><strong>Save as:</strong> <span class="filename">06-effects-automation.png</span></p>
+            <p><strong>What to capture:</strong></p>
+            <ul>
+                <li>Click the <strong>Automation</strong> tab in Effects popup</li>
+                <li>Show all 4 automation lanes</li>
+                <li>Include the curve controls and canvas</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Screenshot 7: Control Panel</h3>
+            <p><strong>Save as:</strong> <span class="filename">07-controls.png</span></p>
+            <p><strong>What to capture:</strong></p>
+            <ul>
+                <li>Close the Effects popup</li>
+                <li>Focus on the top control bar</li>
+                <li>Show Play, Stop buttons, BPM slider</li>
+                <li>Include File menu and any transport controls</li>
+                <li>Can be a zoomed crop of just the top control area</li>
+            </ul>
+        </div>
+
+        <div class="step">
+            <h3>Screenshot 8: Clip Context Menu</h3>
+            <p><strong>Save as:</strong> <span class="filename">08-clip-context-menu.png</span></p>
+            <p><strong>What to capture:</strong></p>
+            <ul>
+                <li>Right-click on a clip in Arrangement View</li>
+                <li>Capture the context menu showing:</li>
+                <ul>
+                    <li>Effects option</li>
+                    <li>Edit option</li>
+                    <li>Delete option</li>
+                </ul>
+                <li>Include part of the clip and timeline for context</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>✅ After Capturing All Screenshots</h2>
+        <ol>
+            <li>Verify all 8 files are saved in <code>docs\screenshots\</code></li>
+            <li>Check that filenames match exactly (01-main-studio.png, etc.)</li>
+            <li>Open <strong>USER_GUIDE.html</strong> in your browser</li>
+            <li>Scroll through and verify all screenshots display correctly</li>
+        </ol>
+        
+        <div class="complete">
+            🎉 Your user guide will now have beautiful screenshots showing every feature!
+        </div>
+    </div>
+
+    <div class="card">
+        <h2>🔧 Troubleshooting</h2>
+        <div class="tip">
+            <strong>⚠️ Screenshot not showing?</strong>
+            <ul>
+                <li>Check the filename matches exactly (case-sensitive)</li>
+                <li>Make sure it's saved as PNG format</li>
+                <li>Verify it's in the correct folder: <code>docs\screenshots\</code></li>
+                <li>If still not showing, a placeholder box will display instead</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

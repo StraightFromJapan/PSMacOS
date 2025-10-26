@@ -1,0 +1,314 @@
+/**
+ * Performance Optimizations CSS
+ * GPU acceleration, reduced repaints, mobile-first approach
+ */
+
+/* Force GPU acceleration for frequently animated elements */
+.gpu-accelerated {
+    transform: translateZ(0);
+    will-change: transform;
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+/* Optimize piano roll rendering */
+.piano-roll-container {
+    contain: layout style paint;
+    content-visibility: auto;
+}
+
+.piano-roll-grid {
+    contain: strict;
+    will-change: scroll-position;
+}
+
+.piano-roll-cell {
+    contain: layout style;
+    will-change: background-color;
+    /* Use transform instead of position changes */
+    transform: translateZ(0);
+}
+
+/* Optimize animations - use transform and opacity only */
+@media (prefers-reduced-motion: no-preference) {
+    .animated-element {
+        transition: transform 0.2s ease, opacity 0.2s ease;
+        will-change: transform, opacity;
+    }
+}
+
+/* Disable animations on low-end devices */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+    /* Reduce visual complexity on mobile */
+    .audio-button,
+    .piano-roll-cell {
+        box-shadow: none !important;
+    }
+    
+    /* Simplify gradients */
+    .piano-roll-grid-container {
+        background: #1e1e1e !important;
+    }
+    
+    /* Reduce border complexity */
+    .piano-roll-cell {
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    /* Disable hover effects */
+    .piano-roll-cell:hover {
+        background: #2a2a2a !important;
+    }
+    
+    /* Optimize touch targets */
+    button,
+    .audio-button,
+    .piano-key {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
+
+/* Optimize scrolling containers */
+.scrollable-container {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+    contain: layout style paint;
+}
+
+/* Optimize canvas rendering */
+canvas {
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transform: translateZ(0);
+}
+
+/* Lazy loading placeholders */
+.lazy-loading {
+    background: linear-gradient(90deg, #2a2a2a 25%, #333 50%, #2a2a2a 75%);
+    background-size: 200% 100%;
+    animation: loading 1.5s ease-in-out infinite;
+}
+
+@keyframes loading {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+/* Virtual scrolling optimization */
+.virtual-scroll-container {
+    position: relative;
+    overflow: auto;
+    contain: strict;
+}
+
+.virtual-scroll-viewport {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    will-change: transform;
+}
+
+/* Reduce paint areas */
+.isolated-paint {
+    contain: paint;
+    isolation: isolate;
+}
+
+/* Optimize for dark mode (reduce power consumption on OLED) */
+@media (prefers-color-scheme: dark) {
+    body {
+        background-color: #000;
+    }
+}
+
+/* Critical rendering path optimization */
+.above-fold {
+    content-visibility: visible;
+}
+
+.below-fold {
+    content-visibility: auto;
+    contain-intrinsic-size: 0 500px;
+}
+
+/* Optimize button grid */
+.button-grid {
+    display: grid;
+    contain: layout style;
+    will-change: scroll-position;
+}
+
+/* Optimize effects popup */
+.effects-popup {
+    contain: layout style paint;
+    transform: translateZ(0);
+}
+
+/* Hardware acceleration for sliders */
+input[type="range"] {
+    transform: translateZ(0);
+    will-change: value;
+}
+
+/* Optimize waveform visualizer */
+.waveform-container,
+.piano-roll-visualizer-container {
+    contain: strict;
+    isolation: isolate;
+}
+
+/* Performance monitoring overlay (optional) */
+.perf-monitor {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #0f0;
+    padding: 10px;
+    font-family: monospace;
+    font-size: 12px;
+    z-index: 10000;
+    border-radius: 4px;
+    pointer-events: none;
+    display: none;
+}
+
+.perf-monitor.show {
+    display: block;
+}
+
+/* Touch-specific optimizations */
+.touch-device * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+}
+
+.touch-device button,
+.touch-device .audio-button {
+    -webkit-tap-highlight-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Optimize grid layout */
+.grid-panel {
+    display: grid;
+    contain: layout style;
+    grid-auto-flow: dense;
+}
+
+/* Reduce unnecessary repaints */
+.static-element {
+    contain: strict;
+}
+
+/* Optimize popup transitions */
+.popup-enter {
+    opacity: 0;
+    transform: scale(0.95) translateZ(0);
+}
+
+.popup-enter-active {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.popup-exit {
+    opacity: 1;
+    transform: scale(1) translateZ(0);
+}
+
+.popup-exit-active {
+    opacity: 0;
+    transform: scale(0.95) translateZ(0);
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* Low-end device mode */
+.low-power-mode * {
+    animation: none !important;
+    transition: none !important;
+}
+
+.low-power-mode .waveform-container,
+.low-power-mode .piano-roll-visualizer-container {
+    display: none;
+}
+
+/* Optimize EQ visualizer */
+.eq-canvas-container {
+    contain: strict;
+    transform: translateZ(0);
+}
+
+/* Reduce complexity for automation visualizers */
+.automation-visualizer {
+    contain: layout style paint;
+}
+
+/* Optimize filter controls layout */
+.enhanced-filter-controls {
+    contain: layout;
+}
+
+/* Mobile landscape optimizations */
+@media (max-width: 896px) and (orientation: landscape) {
+    .app-container {
+        padding: 5px;
+        gap: 5px;
+    }
+    
+    .controls-panel {
+        width: 200px;
+        min-width: 200px;
+    }
+}
+
+/* Tablet optimizations */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .controls-panel {
+        width: 220px;
+        min-width: 220px;
+    }
+    
+    .piano-roll-cell {
+        min-width: 18px;
+    }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    canvas {
+        image-rendering: auto;
+    }
+}
+
+/* Battery saving mode */
+@media (prefers-reduced-data: reduce) {
+    /* Reduce visual effects to save battery */
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+    
+    .waveform-container,
+    .piano-roll-visualizer-container,
+    .automation-visualizer {
+        display: none;
+    }
+}

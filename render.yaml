@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: psychological-studio-backend
+    env: node
+    plan: free
+    buildCommand: cd PSBEFOLDER && npm install
+    startCommand: cd PSBEFOLDER && node server.js
+    disk:
+      name: psystudio-db
+      mountPath: /app/data
+      sizeGB: 1
+    envVars:
+      - key: JWT_SECRET
+        value: psypower-secret-2024
+      - key: NODE_ENV
+        value: production

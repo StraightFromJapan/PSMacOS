@@ -1,0 +1,2738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrangement View - Psychological Studio</title>
+    <style>
+        :root {
+            --button-hover-bg: #5a5a5a;
+            --accent-color: #007bff;
+            --text-color: #f0f0f0;
+            --border-color: #444;
+            --track-bg: #2a2a3e;
+            --clip-bg: #3a3a5e;
+            --grid-line: #333344;
+            --header-gradient-start: #1a1a1a;
+            --header-gradient-end: #0a0a0a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .arrangement-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--header-gradient-start, #16213e) 0%, var(--header-gradient-end, #0f3460) 100%);
+            border-bottom: 2px solid var(--accent-color, #533483);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .arrangement-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .arrangement-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .arrangement-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .arrangement-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .arr-btn {
+            padding: 8px 16px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .arr-btn:hover {
+            background: var(--button-hover-bg);
+            transform: translateY(-1px);
+        }
+
+        .arr-play-btn {
+            background: #4CAF50;
+        }
+
+        .arr-play-btn:hover {
+            background: #45a049;
+        }
+
+        .arr-stop-btn {
+            background: #f44336;
+        }
+
+        .arr-stop-btn:hover {
+            background: #da190b;
+        }
+
+        .arr-back-btn {
+            background: #2196F3;
+        }
+
+        .arr-back-btn:hover {
+            background: #0b7dda;
+        }
+
+        .arr-save-btn {
+            background: #FF9800;
+        }
+
+        .arr-save-btn:hover {
+            background: #F57C00;
+        }
+
+        .arr-danger {
+            background: #ff5722;
+        }
+
+        .arr-danger:hover {
+            background: #e64a19;
+        }
+
+        .arr-new-sample-btn,
+        .arr-new-pattern-btn {
+            background: #9C27B0;
+        }
+
+        .arr-new-sample-btn:hover,
+        .arr-new-pattern-btn:hover {
+            background: #7B1FA2;
+        }
+
+        .arr-tempo-display, .arr-time-display {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Toolbar */
+        .arrangement-toolbar {
+            display: flex;
+            gap: 20px;
+            padding: 12px 20px;
+            background: #1a1a1a;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .arr-tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arr-tool-group label {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .arr-select {
+            padding: 6px 10px;
+            background: var(--button-bg);
+            color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            min-width: 150px;
+        }
+
+        .arr-new-pattern-btn {
+            background: #9C27B0;
+        }
+
+        .arr-new-pattern-btn:hover {
+            background: #7B1FA2;
+        }
+
+        /* Workspace */
+        .arrangement-workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            min-height: 0;
+        }
+
+        .arrangement-sidebar {
+            width: 120px;
+            background: #1a1a1a;
+            border-right: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-timeline-spacer {
+            height: 40px;
+            background: #1a1a1a;
+            border-bottom: 2px solid var(--border-color);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 5px;
+        }
+
+        .edit-mode-group {
+            display: flex;
+            gap: 10px;
+            font-size: 11px;
+        }
+
+        .edit-mode-option {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .edit-mode-option input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .edit-mode-option label {
+            cursor: pointer;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .track-headers {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            min-height: 0;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+            padding-bottom: 17px; /* Account for horizontal scrollbar on tracks */
+        }
+
+        .track-headers::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .track-header {
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
+            padding: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--track-bg);
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .track-header.selected {
+            background: var(--accent-color);
+        }
+
+        .track-name {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .track-controls {
+            display: flex;
+            gap: 2px;
+            flex-wrap: nowrap;
+        }
+
+        .track-btn {
+            padding: 1px 4px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 8px;
+            min-width: 28px;
+            flex-shrink: 0;
+        }
+
+        .track-btn:hover {
+            background: #764ba2;
+        }
+
+        /* Main Area */
+        .arrangement-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #0a0a0a;
+            position: relative;
+            min-height: 0;
+        }
+
+        .timeline-scroll-wrapper {
+            height: 40px;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            background: #1a1a1a;
+            border-bottom: 2px solid var(--border-color);
+            flex-shrink: 0;
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-color) #1a1a1a;
+        }
+
+        .timeline-scroll-wrapper::-webkit-scrollbar {
+            height: 16px !important;
+        }
+
+        .timeline-scroll-wrapper::-webkit-scrollbar-track {
+            background: #1a1a1a !important;
+        }
+
+        .timeline-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: var(--accent-color) !important;
+            border-radius: 8px;
+            border: 3px solid #1a1a1a;
+        }
+
+        .timeline-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--button-hover-bg) !important;
+        }
+
+        .arrangement-timeline {
+            height: 40px;
+            background: #1a1a1a;
+            cursor: pointer;
+            display: block;
+        }
+
+        .arrangement-tracks {
+            flex: 1;
+            overflow-x: scroll;
+            overflow-y: auto;
+            position: relative;
+            width: 100%;
+            min-height: 0;
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-color) #1a1a1a;
+        }
+
+        .arrangement-tracks-container {
+            position: relative;
+            min-width: 5000px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .track-lane {
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
+            min-width: 5000px;
+            border-bottom: 2px solid var(--border-color);
+            position: relative;
+            background: var(--track-bg);
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .track-lane-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Playhead */
+        .playhead-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: #FFD700;
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+            display: none;
+        }
+
+        .playhead-line.playing {
+            display: block;
+        }
+
+        .playhead-handle {
+            position: absolute;
+            top: 0;
+            left: -6px;
+            width: 15px;
+            height: 15px;
+            background: #FFD700;
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255, 215, 0, 0.8);
+        }
+
+        /* Clips */
+        .clip {
+            position: absolute;
+            height: 50px;
+            top: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #fff;
+            border-radius: 5px;
+            cursor: move;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .clip.sample {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+        }
+
+        .clip.pattern {
+            background: #0a0a0a;
+            border-color: #333;
+        }
+
+        .clip:hover {
+            border-color: #FFD700;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Pattern Editor Popup */
+        .pattern-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+        }
+
+        .pattern-popup.active {
+            display: flex;
+        }
+
+        .pattern-editor {
+            background: #1a1a1a;
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .pattern-editor h2 {
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .pattern-name-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            background: var(--button-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+        }
+
+        /* Piano roll styling - Full Implementation */
+        .piano-roll-container {
+            display: flex;
+            flex-direction: column;
+            max-height: 80vh;
+            margin-top: 10px;
+            position: relative;
+            overflow-y: auto;
+            overflow-x: hidden;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 8px;
+        }
+        
+        .piano-roll-grid-wrapper {
+            flex-shrink: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 450px;
+        }
+        
+        .piano-roll-bar-numbers {
+            display: flex;
+            height: 30px;
+            background: #1a1a1a;
+            border-bottom: 2px solid #444;
+            padding-left: 40px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            position: relative;
+            box-sizing: border-box;
+        }
+        
+        .piano-roll-bar-numbers::-webkit-scrollbar {
+            height: 0px;
+            display: none;
+        }
+        
+        .piano-roll-bar-number {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #999;
+            border-right: 1px solid #333;
+            font-weight: 600;
+        }
+        
+        .piano-roll-scrollable {
+            display: flex;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: auto;
+            min-height: 300px;
+            position: relative;
+        }
+        
+        .piano-keys {
+            width: 40px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            flex-shrink: 0;
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .piano-key {
+            height: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .piano-key.white {
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+            color: #ddd;
+        }
+        
+        .piano-key.black {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            color: #fff;
+            height: 12px;
+            margin: 4px 0;
+            z-index: 2;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .piano-key:hover {
+            background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);
+            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+        }
+        
+        .piano-key.active {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+        }
+        
+        .piano-roll-grid-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: visible;
+            min-height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 8px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .piano-roll-grid {
+            position: relative;
+            background: linear-gradient(135deg, #2c2c2c 0%, #1e1e1e 100%);
+            display: grid;
+            grid-auto-rows: 20px;
+            width: 100%;
+            height: auto;
+            min-height: 1680px;
+            border-radius: 6px;
+        }
+        
+        .piano-roll-cell {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+            min-width: 20px;
+            background: #2a2a2a;
+        }
+        
+        .piano-roll-cell:hover {
+            background: #3a3a3a;
+        }
+        
+        .piano-roll-cell.beat-start {
+            border-left: 1px solid #000;
+        }
+        
+        .piano-roll-cell.bar-start {
+            border-left: 3px solid #000 !important;
+        }
+        
+        .piano-roll-cell.bar-end {
+            border-right: 3px solid #000;
+        }
+        
+        .piano-roll-cell.active {
+            background: #DC143C;
+            border: 1px solid #B22222;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 8px rgba(220, 20, 60, 0.6);
+        }
+        
+        .piano-roll-cell.note-long {
+            background: #DC143C;
+            border: 1px solid #B22222;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 8px rgba(220, 20, 60, 0.6); }
+            50% { box-shadow: 0 0 12px rgba(220, 20, 60, 0.8); }
+            100% { box-shadow: 0 0 8px rgba(220, 20, 60, 0.6); }
+        }
+        
+        .piano-roll-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background: #1a1a1a;
+            border-top: 2px solid #444;
+            flex-shrink: 0;
+        }
+        
+        .piano-roll-controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .piano-roll-sound-source {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .piano-roll-sound-source label {
+            color: white;
+            font-size: 13px;
+        }
+        
+        .piano-roll-sound-source select {
+            color: white;
+            background-color: #333;
+            border: 1px solid #555;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .piano-roll-grid-size {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .piano-roll-grid-size label {
+            color: white;
+            font-size: 13px;
+        }
+        
+        .piano-roll-grid-size button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .piano-roll-grid-size button:hover {
+            background: var(--button-hover-bg);
+        }
+        
+        .piano-roll-note-length {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .piano-roll-note-length label {
+            color: white;
+            font-size: 13px;
+        }
+        
+        .piano-roll-note-length button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .piano-roll-preview-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .piano-roll-preview-controls button {
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .piano-roll-preview-controls button:hover {
+            background-color: #45a049;
+        }
+        
+        .piano-roll-clear-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .piano-roll-clear-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .piano-roll-visualizer {
+            width: 200px;
+            height: 60px;
+            background: #0a0a0a;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+        
+        /* Sound Design Controls */
+        .sound-design-controls {
+            margin-top: 0;
+            padding: 15px;
+            background: #1a1a1a;
+            border-radius: 8px;
+            border-top: 2px solid #444;
+            flex-shrink: 0;
+        }
+        
+        .sound-design-controls h4 {
+            margin-top: 0;
+            color: #DC143C;
+            margin-bottom: 15px;
+        }
+        
+        .sound-design-controls h5 {
+            color: #DC143C;
+            margin: 10px 0;
+        }
+        
+        .sound-design-controls .sd-row {
+            margin-bottom: 10px;
+        }
+        
+        .sound-design-controls label {
+            color: #ccc;
+            font-size: 13px;
+        }
+        
+        .sound-design-controls input[type="range"] {
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .sound-design-controls span {
+            color: #DC143C;
+            font-size: 12px;
+            min-width: 60px;
+            text-align: right;
+        }
+        
+        .sound-design-controls select {
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .pattern-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* Piano Roll Scrollbar */
+        .piano-roll-container::-webkit-scrollbar,
+        .piano-roll-scrollable::-webkit-scrollbar,
+        .sound-design-controls::-webkit-scrollbar {
+            width: 12px !important;
+            height: 12px !important;
+        }
+
+        .piano-roll-container::-webkit-scrollbar-track,
+        .piano-roll-scrollable::-webkit-scrollbar-track,
+        .sound-design-controls::-webkit-scrollbar-track {
+            background: #1a1a1a !important;
+            border-radius: 0;
+        }
+
+        .piano-roll-container::-webkit-scrollbar-thumb,
+        .piano-roll-scrollable::-webkit-scrollbar-thumb,
+        .sound-design-controls::-webkit-scrollbar-thumb {
+            background: #DC143C !important;
+            border-radius: 6px;
+            border: 2px solid #1a1a1a;
+        }
+
+        .piano-roll-container::-webkit-scrollbar-thumb:hover,
+        .piano-roll-scrollable::-webkit-scrollbar-thumb:hover,
+        .sound-design-controls::-webkit-scrollbar-thumb:hover {
+            background: #ff1744 !important;
+        }
+
+        /* Scrollbar - Make it VERY visible */
+        .arrangement-tracks::-webkit-scrollbar,
+        .track-headers::-webkit-scrollbar {
+            width: 16px !important;
+            height: 16px !important;
+        }
+
+        .arrangement-tracks::-webkit-scrollbar-track,
+        .track-headers::-webkit-scrollbar-track {
+            background: #1a1a1a !important;
+            border-radius: 0;
+        }
+
+        .arrangement-tracks::-webkit-scrollbar-thumb,
+        .track-headers::-webkit-scrollbar-thumb {
+            background: var(--accent-color) !important;
+            border-radius: 8px;
+            border: 3px solid #1a1a1a;
+            min-height: 40px;
+        }
+
+        .arrangement-tracks::-webkit-scrollbar-thumb:hover,
+        .track-headers::-webkit-scrollbar-thumb:hover {
+            background: var(--button-hover-bg) !important;
+            border: 3px solid #1a1a1a;
+        }
+
+        .arrangement-tracks::-webkit-scrollbar-corner {
+            background: #1a1a1a;
+        }
+
+        /* Force scrollbar to always show */
+        .arrangement-tracks::-webkit-scrollbar-thumb:horizontal {
+            background: var(--accent-color) !important;
+        }
+
+        /* Responsive Design - Tablet (768px and below) */
+        @media screen and (max-width: 768px) {
+            .arrangement-header {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .arrangement-header-left,
+            .arrangement-header-right {
+                gap: 8px;
+            }
+
+            .arrangement-title {
+                font-size: 20px;
+            }
+
+            .arrangement-controls {
+                gap: 8px;
+            }
+
+            .arr-btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .arr-tempo-display,
+            .arr-time-display {
+                font-size: 11px;
+            }
+
+            #arr-bpm-slider {
+                width: 80px !important;
+            }
+
+            .arrangement-toolbar {
+                flex-wrap: wrap;
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .arr-tool-group {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .arrangement-sidebar {
+                width: 80px;
+            }
+
+            .track-header {
+                padding: 6px;
+            }
+
+            .track-name {
+                font-size: 10px;
+                word-break: break-word;
+            }
+        }
+
+        /* Responsive Design - Mobile (480px and below) */
+        @media screen and (max-width: 480px) {
+            .arrangement-header {
+                padding: 8px;
+                gap: 8px;
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .arrangement-header-left,
+            .arrangement-header-right {
+                width: 100%;
+                justify-content: center;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+
+            .arrangement-title {
+                font-size: 18px;
+                order: -1;
+            }
+
+            .arrangement-controls {
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .arr-btn {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .arr-tempo-display,
+            .arr-time-display {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+
+            #arr-bpm-slider {
+                width: 60px !important;
+            }
+
+            .arrangement-toolbar {
+                padding: 8px;
+                gap: 6px;
+                flex-wrap: wrap;
+                justify-content: flex-start;
+            }
+
+            .arr-tool-group {
+                gap: 6px;
+                flex-wrap: nowrap;
+            }
+
+            /* Hide labels on mobile */
+            .arr-tool-label {
+                display: none;
+            }
+
+            /* Make sample/pattern groups more compact */
+            .arr-tool-group:has(#arr-sample-select),
+            .arr-tool-group:has(#arr-pattern-select) {
+                order: -1; /* Move to the left */
+            }
+
+            .arr-select {
+                font-size: 11px;
+                padding: 4px;
+                min-width: 100px;
+                flex: 1;
+            }
+
+            .arr-new-sample-btn,
+            .arr-new-pattern-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            .arrangement-sidebar {
+                width: 50px;
+            }
+
+            .sidebar-timeline-spacer {
+                height: 40px;
+                padding: 2px;
+            }
+
+            .edit-mode-group {
+                flex-direction: column;
+                gap: 4px;
+                font-size: 10px;
+            }
+
+            .edit-mode-option {
+                gap: 2px;
+            }
+
+            .edit-mode-option label {
+                font-size: 10px;
+            }
+
+            /* Show abbreviated labels on mobile */
+            .edit-mode-option label::before {
+                content: attr(data-short);
+            }
+
+            .edit-mode-option label {
+                font-size: 0;
+            }
+
+            .edit-mode-option label::before {
+                font-size: 11px;
+                font-weight: 600;
+            }
+
+            .track-header {
+                padding: 4px;
+            }
+
+            .track-name {
+                font-size: 9px;
+                word-break: break-word;
+                line-height: 1.2;
+            }
+
+            .track-controls {
+                gap: 2px;
+            }
+
+            .track-btn {
+                font-size: 7px;
+                padding: 1px 3px;
+                min-width: 24px;
+            }
+
+            .arr-zoom-display {
+                font-size: 11px;
+                padding: 5px 8px;
+            }
+        }
+
+        /* Landscape Mobile */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .arrangement-header {
+                padding: 8px 12px;
+            }
+
+            .arrangement-title {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            .arrangement-controls {
+                gap: 6px;
+            }
+
+            .arr-btn {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .arrangement-toolbar {
+                padding: 6px;
+            }
+        }
+
+        /* ========== CONTEXT MENU STYLES ========== */
+        .context-menu {
+            position: fixed;
+            background-color: #1a1a1a;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            display: none;
+            min-width: 140px;
+        }
+
+        .context-menu-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #e0e0e0;
+            font-size: 13px;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+
+        .context-menu-item:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+        }
+
+        .context-menu-item:first-child {
+            border-radius: 4px 4px 0 0;
+        }
+
+        .context-menu-item:last-child {
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* ========== EFFECTS POPUP STYLES (from PsychologicalStudio) ========== */
+        /* EXACT PSYCHOLOGICALSTUDIO EFFECTS POPUP STYLES */
+        .effects-popup {
+            position: fixed;
+            background-color: #171717;
+            border: 1px solid #444;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            z-index: 10001;
+            color: #ca006c;
+            font-family: Arial, sans-serif;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #2f2f2f;
+            border-bottom: 1px solid #444;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .popup-close-btn {
+            background: none;
+            border: none;
+            color: #b15600;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0px, 0px, 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-content {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* All sliders in popup with consistent dark styling */
+        .popup-content input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #333333 !important;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            width: 100%;
+        }
+
+        .popup-content input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #666666 !important;
+            cursor: pointer;
+            border: 1px solid #888888;
+        }
+
+        .popup-content input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #666666 !important;
+            cursor: pointer;
+            border: 1px solid #888888;
+        }
+
+        /* Additional styles for effects popup sliders */
+        .effects-popup input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #333333 !important;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            width: 100%;
+        }
+
+        .effects-popup input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #666666 !important;
+            border: 1px solid #888888;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .effects-popup input[type="range"]::-moz-range-thumb {
+            background: #666666 !important;
+            border: 1px solid #888888;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* EFFECT SECTION BASE STYLES WITH COLOR CODING */
+        .effect-section {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .effect-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+
+        .effect-section label {
+            color: #cdcccc;
+        }
+
+        /* Volume Section - Blue Theme */
+        .effect-section:nth-of-type(1) {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-color: rgba(33, 150, 243, 0.3);
+        }
+        
+        .effect-section:nth-of-type(1) h4 {
+            color: #2196F3;
+        }
+        
+        .effect-section:nth-of-type(1) .slider-container label {
+            color: #64B5F6;
+        }
+        
+        .effect-section:nth-of-type(1) input[type="range"] {
+            background: linear-gradient(90deg, #1565C0 0%, #2196F3 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(1) input[type="range"]::-webkit-slider-thumb {
+            background: #2196F3 !important;
+        }
+        
+        .effect-section:nth-of-type(1) input[type="range"]::-moz-range-thumb {
+            background: #2196F3 !important;
+        }
+        
+        .effect-section:nth-of-type(1) span {
+            color: #90CAF9 !important;
+        }
+
+        /* Speed Section - Green Theme */
+        .effect-section:nth-of-type(2) {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+        
+        .effect-section:nth-of-type(2) h4 {
+            color: #4CAF50;
+        }
+        
+        .effect-section:nth-of-type(2) label {
+            color: #81C784;
+        }
+        
+        .effect-section:nth-of-type(2) select {
+            background-color: rgba(46, 125, 50, 0.5);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        /* Delay Section - Orange Theme */
+        .effect-section:nth-of-type(3) {
+            background-color: rgba(244, 89, 54, 0.1);
+            border-color: rgba(255, 152, 0, 0.3);
+        }
+        
+        .effect-section:nth-of-type(3) h4 {
+            color: #F44336;
+        }
+        
+        .effect-section:nth-of-type(3) .slider-container label {
+            color: #FF9800;
+        }
+        
+        .effect-section:nth-of-type(3) input[type="range"] {
+            background: linear-gradient(90deg, #9d3700ff 0%, #b06900ff 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(3) input[type="range"]::-webkit-slider-thumb {
+            background: #F44336 !important;
+        }
+        
+        .effect-section:nth-of-type(3) input[type="range"]::-moz-range-thumb {
+            background: #F44336 !important;
+        }
+        
+        .effect-section:nth-of-type(3) span {
+            color: #F44336 !important;
+        }
+
+        /* Reverb Section - Teal Theme */
+        .effect-section:nth-of-type(4) {
+            background-color: rgba(0, 150, 136, 0.1);
+            border-color: rgba(0, 150, 136, 0.3);
+        }
+        
+        .effect-section:nth-of-type(4) h4 {
+            color: #009688;
+        }
+        
+        .effect-section:nth-of-type(4) .slider-container label {
+            color: #4DB6AC;
+        }
+        
+        .effect-section:nth-of-type(4) input[type="range"] {
+            background: linear-gradient(90deg, #00695C 0%, #009688 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(4) input[type="range"]::-webkit-slider-thumb {
+            background: #009688 !important;
+        }
+        
+        .effect-section:nth-of-type(4) input[type="range"]::-moz-range-thumb {
+            background: #009688 !important;
+        }
+        
+        .effect-section:nth-of-type(4) span {
+            color: #80CBC4 !important;
+        }
+
+        /* EQ Section - Red Theme */
+        .effect-section:nth-of-type(5) {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-color: rgba(244, 67, 54, 0.3);
+        }
+        
+        .effect-section:nth-of-type(5) h4 {
+            color: #F44336;
+        }
+        
+        .effect-section:nth-of-type(5) .slider-container label {
+            color: #EF5350;
+        }
+        
+        .effect-section:nth-of-type(5) input[type="range"] {
+            background: linear-gradient(90deg, #C62828 0%, #F44336 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(5) input[type="range"]::-webkit-slider-thumb {
+            background: #F44336 !important;
+        }
+        
+        .effect-section:nth-of-type(5) input[type="range"]::-moz-range-thumb {
+            background: #F44336 !important;
+        }
+        
+        .effect-section:nth-of-type(5) span {
+            color: #EF5350 !important;
+        }
+
+        /* Filter Section - Cyan Theme */
+        .effect-section:nth-of-type(6) {
+            background-color: rgba(0, 188, 212, 0.1);
+            border-color: rgba(0, 188, 212, 0.3);
+        }
+        
+        .effect-section:nth-of-type(6) h4 {
+            color: #00BCD4;
+        }
+        
+        .effect-section:nth-of-type(6) .slider-container label {
+            color: #4DD0E1;
+        }
+        
+        .effect-section:nth-of-type(6) input[type="range"] {
+            background: linear-gradient(90deg, #00838F 0%, #00BCD4 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(6) input[type="range"]::-webkit-slider-thumb {
+            background: #00BCD4 !important;
+        }
+        
+        .effect-section:nth-of-type(6) input[type="range"]::-moz-range-thumb {
+            background: #00BCD4 !important;
+        }
+        
+        .effect-section:nth-of-type(6) select {
+            background-color: rgba(0, 131, 143, 0.5);
+            border-color: rgba(0, 188, 212, 0.5);
+        }
+        
+        .effect-section:nth-of-type(6) span {
+            color: #80DEEA !important;
+        }
+
+        /* Pitch Section - Yellow Theme */
+        .effect-section:nth-of-type(7) {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+        
+        .effect-section:nth-of-type(7) h4 {
+            color: #FFC107;
+        }
+        
+        .effect-section:nth-of-type(7) .slider-container label {
+            color: #FFD54F;
+        }
+        
+        .effect-section:nth-of-type(7) input[type="range"] {
+            background: linear-gradient(90deg, #F57F17 0%, #FFC107 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(7) input[type="range"]::-webkit-slider-thumb {
+            background: #FFC107 !important;
+        }
+        
+        .effect-section:nth-of-type(7) input[type="range"]::-moz-range-thumb {
+            background: #FFC107 !important;
+        }
+        
+        .effect-section:nth-of-type(7) span {
+            color: #FFE082 !important;
+        }
+
+        .slider-container {
+            margin-bottom: 10px;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+            accent-color: rgb(97, 97, 97);
+        }
+
+        .slider-container span {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: #00bbff;
+        }
+
+        .slider-container select {
+            background-color: #333333;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        .popup-footer {
+            padding: 10px 15px;
+            background-color: #2f2f2f;
+            border-top: 1px solid #444;
+            border-radius: 0 0 8px 8px;
+            text-align: right;
+        }
+
+        .popup-reset-btn {
+            background-color: #212121;
+            color: rgb(255, 0, 0);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .popup-accept-btn {
+            background-color: #212121;
+            color: rgb(183, 255, 0);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .popup-accept-btn:hover {
+            background-color: #0a0384;
+        }
+
+        /* Keep arrangement-specific button classes for compatibility */
+        .arr-btn-apply {
+            background-color: #212121;
+            color: rgb(183, 255, 0);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .arr-btn-apply:hover {
+            background-color: #0a0384;
+        }
+
+        .arr-btn-reset {
+            background-color: #212121;
+            color: rgb(255, 0, 0);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        /* Visual EQ Styles */
+        .visual-eq-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .eq-canvas {
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        .eq-frequency-labels {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            font-size: 10px;
+            color: #aaa;
+            pointer-events: none;
+        }
+
+        .eq-gain-labels {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 10px;
+            color: #9e0064;
+            pointer-events: none;
+        }
+
+        .eq-band-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .eq-band-control {
+            flex: 1;
+            margin: 0 5px;
+        }
+
+        .eq-band-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .eq-band-control input {
+            width: 100%;
+        }
+
+        .eq-band-value {
+            display: block;
+            text-align: center;
+            font-size: 10px;
+            color: #b30074;
+            margin-top: 2px;
+        }
+
+        /* LFO SECTION STYLES - INDIGO THEME FROM PSYCHOLOGICALSTUDIO */
+        .lfo-section {
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            padding-top: 15px;
+            background-color: rgba(63, 81, 181, 0.1);
+            border: 1px solid rgba(63, 81, 181, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .lfo-section h4 {
+            color: #3F51B5;
+        }
+
+        .lfo-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .lfo-tab {
+            flex: 1;
+            padding: 8px 12px;
+            background-color: #2a2a2a;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .lfo-tab:hover {
+            background-color: #333;
+            color: #aaa;
+        }
+
+        .lfo-tab.active {
+            background-color: #3F51B5;
+            color: #ffffff;
+            border-color: #5C6BC0;
+        }
+
+        .lfo-panel {
+            display: none;
+        }
+
+        .lfo-panel.active {
+            display: block;
+        }
+
+        .lfo-control {
+            margin-bottom: 10px;
+        }
+
+        .lfo-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #7986CB;
+        }
+
+        .lfo-control select {
+            width: 100%;
+            background-color: rgba(28, 28, 28, 0.5);
+            color: #e0e0e0;
+            border: 1px solid rgba(178, 35, 35, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .lfo-control input[type="range"] {
+            width: 100%;
+            background: linear-gradient(90deg, #932828ff 0%, #b53f3fff 100%) !important;
+        }
+
+        .lfo-control input[type="range"]::-webkit-slider-thumb {
+            background: #3F51B5 !important;
+        }
+
+        .lfo-control input[type="range"]::-moz-range-thumb {
+            background: #3F51B5 !important;
+        }
+
+        .lfo-target,
+        .lfo-waveform {
+            background-color: rgba(28, 28, 28, 0.5);
+            color: #e0e0e0;
+            border: 1px solid rgba(178, 35, 35, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .lfo-rate-value,
+        .lfo-depth-value {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: #505a94ff !important;
+            margin-top: 2px;
+        }
+
+        .lfo-visualizer {
+            margin-top: 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .lfo-wave {
+            width: 100%;
+            height: 60px;
+            border-radius: 2px;
+        }
+
+        /* AUTOMATION SECTION STYLES - PURPLE THEME FROM PSYCHOLOGICALSTUDIO */
+        .automation-section {
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            padding-top: 15px;
+            background-color: rgba(156, 39, 176, 0.1);
+            border: 1px solid rgba(156, 39, 176, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .automation-section h4 {
+            color: #9C27B0;
+        }
+
+        .automation-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .automation-tab {
+            flex: 1;
+            padding: 8px 12px;
+            background-color: #2a2a2a;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .automation-tab:hover {
+            background-color: #333;
+            color: #aaa;
+        }
+
+        .automation-tab.active {
+            background-color: #9C27B0;
+            color: #ffffff;
+            border-color: #AB47BC;
+        }
+
+        .automation-panel {
+            display: none;
+        }
+
+        .automation-panel.active {
+            display: block;
+        }
+
+        .automation-control {
+            margin-bottom: 10px;
+        }
+
+        .automation-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #BA68C8;
+        }
+
+        .automation-control select {
+            width: 100%;
+            background-color: rgba(28, 28, 28, 0.5);
+            color: #e0e0e0;
+            border: 1px solid rgba(156, 39, 176, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .automation-control input[type="range"] {
+            width: 100%;
+            background: linear-gradient(90deg, #6A1B9A 0%, #9C27B0 100%) !important;
+        }
+
+        .automation-control input[type="range"]::-webkit-slider-thumb {
+            background: #9C27B0 !important;
+        }
+
+        .automation-control input[type="range"]::-moz-range-thumb {
+            background: #9C27B0 !important;
+        }
+
+        .automation-target,
+        .automation-curve {
+            background-color: rgba(28, 28, 28, 0.5);
+            color: #e0e0e0;
+            border: 1px solid rgba(156, 39, 176, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .automation-start-value,
+        .automation-end-value,
+        .automation-duration-value {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: #CE93D8 !important;
+            margin-top: 2px;
+        }
+
+        .automation-visualizer {
+            margin-top: 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .automation-canvas {
+            width: 100%;
+            height: 100px;
+            border-radius: 2px;
+        }
+
+        /* Mobile responsive for effects popup */
+        @media screen and (max-width: 768px) {
+            .effects-popup {
+                width: 95vw !important;
+                height: 90vh !important;
+                left: 2.5vw !important;
+                top: 5vh !important;
+            }
+
+            .slider-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .slider-container label {
+                min-width: unset;
+            }
+
+            .slider-container input[type="range"] {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="arrangement-header">
+        <!-- Left Section: Play, Stop, Bar Counter, Tempo -->
+        <div class="arrangement-header-left">
+            <div class="arrangement-controls">
+                <button id="arr-play" class="arr-btn arr-play-btn">Play</button>
+                <button id="arr-stop" class="arr-btn arr-stop-btn">Stop</button>
+                <span style="color: #fff; font-weight: 600;">Bar: <span id="arr-current-bar">1</span></span>
+            </div>
+            <div class="arr-tempo-display" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.1); padding: 6px 10px; border-radius: 6px;">
+                <label style="margin: 0; color: #fff; font-weight: 600;">BPM:</label>
+                <input type="range" id="arr-bpm-slider" min="40" max="1000" value="120" step="1" style="width: 100px; cursor: pointer;">
+                <span id="arr-tempo-value" style="min-width: 35px; text-align: right; font-weight: bold; color: #fff;">120</span>
+            </div>
+        </div>
+
+        <!-- Center Section: Title -->
+        <div class="arrangement-title">
+            Psychological Studio<br><p>by Psypower</p>
+        </div>
+
+        <!-- Right Section: Back, Save, Load, Clear -->
+        <div class="arrangement-header-right">
+            <button id="arr-back" class="arr-btn arr-back-btn">← Back to Studio</button>
+            <button id="arr-save" class="arr-btn arr-save-btn">Save</button>
+            <button id="arr-load" class="arr-btn">Load</button>
+            <button id="arr-clear" class="arr-btn arr-danger">Clear</button>
+        </div>
+    </div>
+
+    <div class="arrangement-toolbar">
+        <button id="arr-add-track" class="arr-btn" style="padding: 6px 12px; font-size: 13px;">➕ Track</button>
+        <div class="arr-tool-group">
+            <label class="arr-tool-label">Add Sample:</label>
+            <select id="arr-sample-select" class="arr-select">
+                <option value="">-- Select Sample --</option>
+            </select>
+            <button id="arr-new-sample" class="arr-btn arr-new-sample-btn">New Sample</button>
+        </div>
+        <div class="arr-tool-group">
+            <label class="arr-tool-label">Add Pattern:</label>
+            <select id="arr-pattern-select" class="arr-select">
+                <option value="">-- Select Pattern --</option>
+            </select>
+            <button id="arr-new-pattern" class="arr-btn arr-new-pattern-btn">New Pattern</button>
+        </div>
+    </div>
+
+    <!-- Hidden file input for sample upload -->
+    <input type="file" id="arr-sample-file-input" accept="audio/*" style="display: none;">
+
+    <div class="arrangement-workspace">
+        <div class="arrangement-sidebar">
+            <div class="sidebar-timeline-spacer">
+                <div class="edit-mode-group">
+                    <div class="edit-mode-option">
+                        <input type="radio" id="edit-mode-stretch" name="editMode" value="stretch" checked>
+                        <label for="edit-mode-stretch" data-short="S">Stretch</label>
+                    </div>
+                    <div class="edit-mode-option">
+                        <input type="radio" id="edit-mode-trim" name="editMode" value="trim">
+                        <label for="edit-mode-trim" data-short="T">Trim</label>
+                    </div>
+                </div>
+            </div>
+            <div class="track-headers" id="track-headers">
+                <!-- Track headers will be added here -->
+            </div>
+        </div>
+        <div class="arrangement-main">
+            <div class="timeline-scroll-wrapper" id="timeline-scroll-wrapper">
+                <canvas id="arrangement-timeline" class="arrangement-timeline"></canvas>
+            </div>
+            <div class="arrangement-tracks" id="arrangement-tracks-scroll">
+                <div class="playhead-line" id="playhead-line">
+                    <div class="playhead-handle"></div>
+                </div>
+                <div class="arrangement-tracks-container" id="arrangement-tracks">
+                    <!-- Track lanes will be added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pattern Editor Popup -->
+    <div class="pattern-popup" id="pattern-popup">
+        <div class="pattern-editor">
+            <h2>Create Pattern</h2>
+            <input type="text" id="pattern-name-input" class="pattern-name-input" placeholder="Pattern Name">
+            
+            <!-- Piano Roll Container -->
+            <div class="piano-roll-container">
+                <!-- Piano Roll Grid Wrapper (scrollable area) -->
+                <div class="piano-roll-grid-wrapper">
+                    <!-- Bar Numbers -->
+                    <div class="piano-roll-bar-numbers" id="piano-roll-bar-numbers"></div>
+                    
+                    <!-- Scrollable Grid Area -->
+                    <div class="piano-roll-scrollable" id="piano-roll-scrollable">
+                        <!-- Piano Keys (Note Names) -->
+                        <div class="piano-keys" id="piano-keys"></div>
+                        
+                        <!-- Grid Container -->
+                        <div class="piano-roll-grid-container">
+                            <div class="piano-roll-grid" id="piano-roll-grid"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="piano-roll-controls">
+                    <div class="piano-roll-controls-row">
+                        <!-- Sound Source -->
+                        <div class="piano-roll-sound-source">
+                            <label>Sound:</label>
+                            <select id="piano-roll-sound-source">
+                                <option value="sample">Sample</option>
+                                <option value="synth">Synth</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Grid Size -->
+                        <div class="piano-roll-grid-size">
+                            <label>Grid:</label>
+                            <button id="piano-roll-grid-decrease">-</button>
+                            <span id="piano-roll-grid-display">16</span>
+                            <button id="piano-roll-grid-increase">+</button>
+                        </div>
+                        
+                        <!-- Note Length -->
+                        <div class="piano-roll-note-length">
+                            <label>Length:</label>
+                            <button id="piano-roll-note-decrease">-</button>
+                            <span id="piano-roll-note-display">1/16</span>
+                            <button id="piano-roll-note-increase">+</button>
+                        </div>
+                        
+                        <!-- Preview/Stop/Clear -->
+                        <div class="piano-roll-preview-controls">
+                            <button id="piano-roll-preview-btn">▶ Preview</button>
+                            <button id="piano-roll-stop-btn">⏹ Stop</button>
+                        </div>
+                        
+                        <button id="piano-roll-clear-btn" class="piano-roll-clear-btn">Clear</button>
+                        
+                        <!-- Visualizer -->
+                        <canvas id="piano-roll-visualizer" class="piano-roll-visualizer" width="200" height="60"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Sound Design Controls (Synth) -->
+                <div class="sound-design-controls" id="sound-design-controls" style="display:none; margin-top: 15px; padding: 15px; background: #1a1a1a; border-radius: 8px;">
+                    <h4 style="margin-top: 0; color: #DC143C;">Sound Design</h4>
+                    
+                    <div class="sd-row">
+                        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
+                            <label style="color:#DC143C;">Osc 1 Wave</label>
+                            <select id="sd-osc1-wave" style="background-color:#333;color:#fff;border:1px solid #555;border-radius:4px;padding:5px;">
+                                <option value="sine">Sine</option>
+                                <option value="square">Square</option>
+                                <option value="triangle">Triangle</option>
+                                <option value="sawtooth">Sawtooth</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Level</label>
+                            <input type="range" id="sd-osc1-level" min="0" max="100" value="50" step="1">
+                            <span id="sd-osc1-level-val">50%</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Detune</label>
+                            <input type="range" id="sd-osc1-detune" min="-1200" max="1200" value="0" step="1">
+                            <span id="sd-osc1-detune-val">0c</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div class="sd-row">
+                        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
+                            <label style="color:#DC143C;">Osc 2 Wave</label>
+                            <select id="sd-osc2-wave" style="background-color:#333;color:#fff;border:1px solid #555;border-radius:4px;padding:5px;">
+                                <option value="sine">Sine</option>
+                                <option value="square">Square</option>
+                                <option value="triangle">Triangle</option>
+                                <option value="sawtooth" selected>Sawtooth</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Level</label>
+                            <input type="range" id="sd-osc2-level" min="0" max="100" value="50" step="1">
+                            <span id="sd-osc2-level-val">50%</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Detune</label>
+                            <input type="range" id="sd-osc2-detune" min="-1200" max="1200" value="0" step="1">
+                            <span id="sd-osc2-detune-val">0c</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div class="sd-row">
+                        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px">
+                            <label style="color:#DC143C;">Filter Type</label>
+                            <select id="sd-filter-type" style="background-color:#333;color:#fff;border:1px solid #555;border-radius:4px;padding:5px;">
+                                <option value="lowpass">Low Pass</option>
+                                <option value="highpass">High Pass</option>
+                                <option value="bandpass">Band Pass</option>
+                            </select>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Cutoff</label>
+                            <input type="range" id="sd-filter-cutoff" min="20" max="20000" value="2000" step="1">
+                            <span id="sd-filter-cutoff-val">2000 Hz</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Resonance</label>
+                            <input type="range" id="sd-filter-res" min="0" max="100" value="0" step="1">
+                            <span id="sd-filter-res-val">0</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <div class="sd-row">
+                        <h5 style="color: #DC143C; margin: 10px 0;">Envelope (ADSR)</h5>
+                        
+                        <!-- ADSR Visual Canvas -->
+                        <canvas id="adsr-canvas" style="width: 100%; height: 200px; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; cursor: crosshair; display: block; margin-bottom: 15px;"></canvas>
+                        
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Attack</label>
+                            <input type="range" id="sd-env-attack" min="0" max="2000" value="10" step="1">
+                            <span id="sd-env-attack-val">10 ms</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Decay</label>
+                            <input type="range" id="sd-env-decay" min="0" max="4000" value="100" step="1">
+                            <span id="sd-env-decay-val">100 ms</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Sustain</label>
+                            <input type="range" id="sd-env-sustain" min="0" max="100" value="70" step="1">
+                            <span id="sd-env-sustain-val">70%</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Release</label>
+                            <input type="range" id="sd-env-release" min="0" max="4000" value="200" step="1">
+                            <span id="sd-env-release-val">200 ms</span>
+                        </div>
+                        <br>
+                        
+                        <!-- Envelope to Pitch Modulation -->
+                        <div style="border-top: 1px solid #444; padding-top: 10px; margin-top: 10px;">
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between; margin-bottom: 8px;">
+                                <h5 style="color: #DC143C; margin: 0; font-size: 13px;">Envelope → Pitch Modulation</h5>
+                                <input type="checkbox" id="sd-env-pitch-enable" style="width: 18px; height: 18px; cursor: pointer;">
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label style="font-size: 12px;">Amount (semitones)</label>
+                                <input type="range" id="sd-env-pitch-amount" min="-24" max="24" step="1" value="0">
+                                <span id="sd-env-pitch-amount-val" style="min-width: 45px; text-align: right;">0</span>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 10px; color: #888; text-align: center;">
+                                Modulates pitch over envelope (creates pitch bends, kicks, toms, etc.)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pattern-buttons">
+                <button id="pattern-cancel-btn" class="arr-btn">Cancel</button>
+                <button id="pattern-save-btn" class="arr-btn arr-save-btn">Save Pattern</button>
+                <button id="pattern-save-midi-btn" class="arr-btn arr-save-midi-btn">Save as MIDI</button>
+                <button id="pattern-save-sample-btn" class="arr-btn arr-save-sample-btn">Save as Sample</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu for Clips -->
+    <div id="clip-context-menu" class="context-menu">
+        <div class="context-menu-item" data-action="delete">Delete</div>
+        <div class="context-menu-item" data-action="effects">Effects</div>
+        <div class="context-menu-item" data-action="edit" style="display:none;">Edit Pattern</div>
+    </div>
+
+    <!-- Effects Popup (Complete with LFOs & Automations) -->
+    <div id="arr-effects-popup" class="effects-popup">
+        <div class="popup-header">
+            <h3>Effects for <span id="arr-popup-clip-name">Clip</span></h3>
+            <button class="popup-close-btn" id="arr-effects-close-btn">Close</button>
+        </div>
+        <div class="popup-content">
+            
+            <!-- VOLUME SECTION -->
+            <div class="effect-section">
+                <h4>VOLUME</h4>
+                <div class="slider-container">
+                    <label>Gain</label>
+                    <input type="range" id="arr-sample-volume" min="0" max="200" value="100" step="1">
+                    <span id="arr-sample-volume-value">100%</span>
+                </div>
+            </div>
+
+            <!-- SPEED SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>SPEED</h4>
+                <div class="speed-selector">
+                    <label for="arr-speed-select">Speed:</label>
+                    <select id="arr-speed-select">
+                        <option value="0.03125">0.03125x</option>
+                        <option value="0.0625">0.0625x</option>
+                        <option value="0.125">0.125x</option>
+                        <option value="0.25">0.25x</option>
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- DELAY SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>DELAY</h4>
+                <div class="slider-container">
+                    <label>Time (ms)</label>
+                    <input type="range" id="arr-delay-time" min="0" max="1000" value="0" step="10">
+                    <span id="arr-delay-time-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Feedback (%)</label>
+                    <input type="range" id="arr-delay-feedback" min="0" max="100" value="0" step="1">
+                    <span id="arr-delay-feedback-value">0</span>
+                </div>
+            </div>
+
+            <!-- REVERB SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>REVERB</h4>
+                <div class="slider-container">
+                    <label>Decay (s)</label>
+                    <input type="range" id="arr-reverb-decay" min="0.1" max="5" value="0" step="0.1">
+                    <span id="arr-reverb-decay-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Pre-delay (ms)</label>
+                    <input type="range" id="arr-reverb-predelay" min="0" max="100" value="0" step="1">
+                    <span id="arr-reverb-predelay-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Diffusion (%)</label>
+                    <input type="range" id="arr-reverb-diffusion" min="0" max="100" value="50" step="1">
+                    <span id="arr-reverb-diffusion-value">50</span>
+                </div>
+                <div class="slider-container">
+                    <label>Low Cut (Hz)</label>
+                    <input type="range" id="arr-reverb-lowcut" min="20" max="1000" value="20" step="10">
+                    <span id="arr-reverb-lowcut-value">20</span>
+                </div>
+                <div class="slider-container">
+                    <label>High Cut (Hz)</label>
+                    <input type="range" id="arr-reverb-highcut" min="1000" max="20000" value="20000" step="100">
+                    <span id="arr-reverb-highcut-value">20000</span>
+                </div>
+                <div class="slider-container">
+                    <label>Damping (%)</label>
+                    <input type="range" id="arr-reverb-damping" min="0" max="100" value="50" step="1">
+                    <span id="arr-reverb-damping-value">50</span>
+                </div>
+                <div class="slider-container">
+                    <label>Wet/Dry (%)</label>
+                    <input type="range" id="arr-reverb-mix" min="0" max="100" value="0" step="1">
+                    <span id="arr-reverb-mix-value">0</span>
+                </div>
+            </div>
+
+            <!-- EQUALIZER SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>EQUALIZER</h4>
+                <div class="eq-controls">
+                    <div style="position: relative; width: 100%; height: 300px; background: #0a0a0a; border: 2px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+                        <canvas id="arr-eq-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                    </div>
+                    <div style="margin-top: 10px; text-align: center; font-size: 12px; color: #888;">
+                        <p>Click/drag to add or move EQ points</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>FILTER</h4>
+                <div class="slider-container">
+                    <label>Type</label>
+                    <select id="arr-filter-type">
+                        <option value="none">None</option>
+                        <option value="lowpass">Low Pass</option>
+                        <option value="highpass">High Pass</option>
+                        <option value="bandpass">Band Pass</option>
+                        <option value="notch">Notch</option>
+                    </select>
+                </div>
+                <div class="slider-container">
+                    <label>Cutoff (Hz)</label>
+                    <input type="range" id="arr-filter-cutoff" min="20" max="20000" value="1000" step="10">
+                    <span id="arr-filter-cutoff-value">1000</span>
+                </div>
+                <div class="slider-container">
+                    <label>Resonance</label>
+                    <input type="range" id="arr-filter-resonance" min="0" max="30" value="0" step="0.1">
+                    <span id="arr-filter-resonance-value">0</span>
+                </div>
+            </div>
+
+            <!-- LFO SECTION -->
+            <div class="effect-section lfo-section">
+                <hr color="grey">
+                <br>
+                <h4>LFO MODULATORS</h4>
+                
+                <!-- LFO Tabs -->
+                <div class="lfo-tabs">
+                    <button class="lfo-tab active" data-lfo="1">LFO 1</button>
+                    <button class="lfo-tab" data-lfo="2">LFO 2</button>
+                    <button class="lfo-tab" data-lfo="3">LFO 3</button>
+                    <button class="lfo-tab" data-lfo="4">LFO 4</button>
+                </div>
+                
+                <!-- LFO Panels -->
+                <div class="lfo-panel active" id="arr-lfo-panel-1">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-1-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-1-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-1-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-1-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-1-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-1-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-1-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-2">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-2-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-2-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-2-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-2-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-2-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-2-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-2-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-3">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-3-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-3-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-3-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-3-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-3-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-3-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-3-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-4">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-4-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-4-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-4-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-4-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-4-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-4-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-4-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUTOMATION SECTION -->
+            <div class="effect-section automation-section">
+                <hr color="grey">
+                <br>
+                <h4>AUTOMATION</h4>
+                
+                <!-- Automation Tabs -->
+                <div class="automation-tabs">
+                    <button class="automation-tab active" data-automation="1">Auto 1</button>
+                    <button class="automation-tab" data-automation="2">Auto 2</button>
+                    <button class="automation-tab" data-automation="3">Auto 3</button>
+                    <button class="automation-tab" data-automation="4">Auto 4</button>
+                </div>
+                
+                <!-- Automation Panels -->
+                <div class="automation-panel active" id="arr-automation-panel-1">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-1-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-1-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-1-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-1-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-1-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-1-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-1-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-1-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-1-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-2">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-2-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-2-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-2-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-2-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-2-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-2-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-2-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-2-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-2-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-3">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-3-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-3-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-3-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-3-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-3-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-3-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-3-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-3-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-3-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-4">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-4-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-4-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-4-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-4-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-4-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-4-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-4-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-4-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-4-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER BUTTONS -->
+            <div class="popup-footer">
+                <button id="arr-effects-apply-btn" class="arr-btn-apply">Apply</button>
+                <button id="arr-effects-reset-btn" class="arr-btn-reset">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="./arrangement.js"></script>
+</body>
+</html>

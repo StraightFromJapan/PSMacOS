@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychological Studio - Desktop App</title>
+    <link rel="stylesheet" href="./NewRelease/style.css">
+    <link rel="stylesheet" href="./plugins/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0a0e27 0%, #1a1a2e 50%, #16213e 100%);
+            color: #f0f0f0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        canvas#backgroundCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            gap: 40px;
+            padding: 40px;
+        }
+
+        .logo-section {
+            animation: fadeIn 1s ease-in;
+        }
+
+        .logo-section h1 {
+            font-size: 4em;
+            font-weight: 300;
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .logo-section p {
+            font-size: 1.2em;
+            color: #00d4ff;
+            opacity: 0.8;
+        }
+
+        .buttons-section {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .nav-button {
+            padding: 16px 40px;
+            font-size: 1.1em;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            font-weight: 600;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            min-width: 200px;
+        }
+
+        .nav-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            transition: left 0.3s ease;
+            z-index: -1;
+        }
+
+        .nav-button:hover::before {
+            left: 100%;
+        }
+
+        .btn-studio {
+            background: linear-gradient(135deg, #00d4ff, #0099ff);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+        }
+
+        .btn-studio:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.7);
+        }
+
+        .btn-arrangement {
+            background: linear-gradient(135deg, #ff6b6b, #ff0000);
+            color: #fff;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.5);
+        }
+
+        .btn-arrangement:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(255, 0, 0, 0.7);
+        }
+
+        .btn-backend {
+            background: linear-gradient(135deg, #4ecca3, #00ff00);
+            color: #000;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.5);
+            font-size: 0.9em;
+        }
+
+        .btn-backend:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 255, 0, 0.7);
+        }
+
+        .nav-button:active {
+            transform: translateY(-1px);
+        }
+
+        .info-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-left: 4px solid #00d4ff;
+            border-radius: 4px;
+            max-width: 600px;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+
+        .info-section h3 {
+            color: #00d4ff;
+            margin-bottom: 10px;
+        }
+
+        .backend-status {
+            margin-top: 20px;
+            padding: 12px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            background: rgba(0, 255, 0, 0.1);
+            border: 1px solid rgba(0, 255, 0, 0.3);
+            color: #4ecca3;
+        }
+
+        .backend-status.checking {
+            background: rgba(255, 165, 0, 0.1);
+            border-color: rgba(255, 165, 0, 0.3);
+            color: #ffb347;
+        }
+
+        .backend-status.error {
+            background: rgba(255, 0, 0, 0.1);
+            border-color: rgba(255, 0, 0, 0.3);
+            color: #ff6b6b;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            margin-right: 8px;
+            animation: pulse 2s infinite;
+        }
+
+        .status-indicator.online {
+            background: #00ff00;
+        }
+
+        .status-indicator.offline {
+            background: #ff0000;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.5;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+
+    <div class="container">
+        <div class="logo-section">
+            <h1>🎵 Psychological Studio</h1>
+            <p>Professional Audio Production Suite - Desktop Edition</p>
+        </div>
+
+        <div class="buttons-section">
+            <button class="nav-button btn-studio" id="openStudioBtn">
+                📊 Open Studio
+            </button>
+            <button class="nav-button btn-arrangement" id="openArrangementBtn">
+                🎹 Arrangement
+            </button>
+            <button class="nav-button btn-backend" id="checkBackendBtn">
+                🔌 Check Backend
+            </button>
+        </div>
+
+        <div class="backend-status" id="backendStatus">
+            <span class="status-indicator checking"></span>
+            Checking backend connection...
+        </div>
+
+        <div class="info-section">
+            <h3>📖 Getting Started</h3>
+            <p>
+                Welcome to Psychological Studio! Your professional audio production suite is ready to go.
+            </p>
+            <ul style="text-align: left; margin-top: 10px; list-style-position: inside;">
+                <li>📊 <strong>Studio:</strong> Full production with effects, automation, and sampling</li>
+                <li>🎹 <strong>Arrangement:</strong> Advanced track arrangement and automation tools</li>
+                <li>🔌 <strong>Backend:</strong> Cloud sync and project persistence</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Navigation Helper -->
+    <script src="electron-nav.js"></script>
+    
+    <!-- Undo/Redo System -->
+    <script src="undo-redo-system.js"></script>
+
+    <!-- Background Animation (from NewRelease) -->
+    <script>
+        // Enhanced Background Canvas Animation
+        const canvas = document.getElementById('backgroundCanvas');
+        const ctx = canvas.getContext('2d');
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        const particles = [];
+        const particleCount = 50;
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 2;
+                this.speedY = (Math.random() - 0.5) * 2;
+                this.opacity = Math.random() * 0.5 + 0.2;
+                this.color = ['#00d4ff', '#0099ff', '#ff6b6b', '#4ecca3'][Math.floor(Math.random() * 4)];
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x > canvas.width) this.x = 0;
+                if (this.x < 0) this.x = canvas.width;
+                if (this.y > canvas.height) this.y = 0;
+                if (this.y < 0) this.y = canvas.height;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.opacity;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Initialize particles
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        // Animation loop
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.globalAlpha = 1;
+
+            particles.forEach(particle => {
+                particle.update();
+                particle.draw();
+            });
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Backend Status Check
+        async function checkBackendStatus() {
+            const statusEl = document.getElementById('backendStatus');
+            statusEl.className = 'backend-status checking';
+            statusEl.innerHTML = '<span class="status-indicator checking"></span>Checking backend connection...';
+
+            try {
+                const config = await ElectronAppNav.getAppConfig();
+                const backendUrl = config.backendUrl;
+
+                const response = await fetch(`${backendUrl}/api/health`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    statusEl.className = 'backend-status';
+                    statusEl.innerHTML = `<span class="status-indicator online"></span>✅ Backend is online! Version: ${info.version || 'Unknown'}`;
+                } else {
+                    throw new Error('Backend returned error: ' + response.status);
+                }
+            } catch (error) {
+                statusEl.className = 'backend-status error';
+                statusEl.innerHTML = `<span class="status-indicator offline"></span>❌ Backend offline: ${error.message}. You can still use the app offline!`;
+            }
+        }
+
+        // Button Event Listeners
+        document.getElementById('openStudioBtn').addEventListener('click', () => {
+            ElectronAppNav.openPsychologicalStudio();
+        });
+
+        document.getElementById('openArrangementBtn').addEventListener('click', () => {
+            ElectronAppNav.openArrangement();
+        });
+
+        document.getElementById('checkBackendBtn').addEventListener('click', checkBackendStatus);
+
+        // Check backend on load
+        window.addEventListener('DOMContentLoaded', checkBackendStatus);
+        document.addEventListener('DOMContentLoaded', checkBackendStatus);
+    </script>
+</body>
+</html>

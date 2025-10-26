@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:; connect-src 'self' https://*.google.com https://*.onrender.com wss: ws:;">
+    <meta name="google-signin-client_id" content="41864405965-3mcjqel84al2ig1qi7jme45c4hc45t6l.apps.googleusercontent.com">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Psychological Studio</title>
+    <link rel="manifest" href="./manifest.json">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Psychological Studio">
+    <link rel="apple-touch-icon" href="./icon.png">
+    <link rel="stylesheet" href="./NewRelease/style.css">
+    <link rel="stylesheet" href="./PsychologicalStudio/style.css">
+</head>
+<body>
+    <canvas id="backgroundCanvas"></canvas>
+    <div class="app-container" style="display: none;">
+        <!-- Offline Indicator -->
+        <div id="offlineIndicator" class="offline-indicator" style="display: none;">
+            <span class="offline-icon">📡</span>
+            <span class="offline-text">Working Offline</span>
+        </div>
+        
+        <div class="controls-panel">
+            <label id="PsychologicalStudio"><p>Psychological Studio<p style="font-size: x-small;">by Psypower</p></p></label>
+            <div class="left-controls">
+                <div class="controls-section">
+                    <button id="playButton" class="play-button">Play</button>
+                </div>
+                
+                <div class="controls-section">
+                    <button id="recordButton" class="record-button">Record</button>
+                    <button id="saveButton" class="save-button">Save</button>
+                </div>
+            </div>
+            
+            <div class="right-controls">
+                <div class="controls-section">
+                    <div class="tempo-control">
+                        <label for="tempo">Tempo:</label>
+                        <input type="range" id="tempo" class="tempo-slider" min="40" max="240" value="120">
+                        <div class="tempo-display" id="tempoDisplay">120 BPM</div>
+                    </div>
+                    
+                    <div class="high-tempo-control tempo-control">
+                        <label>High Tempo:</label>
+                        <input type="range" class="tempo-slider high-tempo-slider" min="240" max="1000" value="240" disabled>
+                        <div class="tempo-display high-tempo-display">240 BPM</div>
+                    </div>
+                </div>
+                
+                <div class="controls-section">
+                    <div class="long-loop-tempo-control tempo-control">
+                        <label>Long Loop Tempo:</label>
+                        <input type="range" class="tempo-slider long-loop-tempo-slider" min="40" max="1000" value="120">
+                        <div class="tempo-display long-loop-tempo-display">120 BPM</div>
+                    </div>
+                    
+                    <div class="loop-controls">
+                        <label>Loop Length:</label>
+                        <div class="loop-options">
+                            <button class="loop-button" data-loop="1">1/4</button>
+                            <button class="loop-button" data-loop="2">1/2</button>
+                            <button class="loop-button" data-loop="4">1</button>
+                            <button class="loop-button" data-loop="8">2</button>
+                            <button class="loop-button" data-loop="16">4</button>
+                            <button class="loop-button" data-loop="32">8</button>
+                        </div>
+                    </div>
+                    
+                    <div class="loop-controls">
+                        <label>Long Loop Length</label>
+                        <div class="loop-options">
+                            <button class="long-loop-button loop-button" data-long-loop="1">1</button>
+                            <button class="long-loop-button loop-button" data-long-loop="2">2</button>
+                            <button class="long-loop-button loop-button" data-long-loop="4">4</button>
+                            <button class="long-loop-button loop-button" data-long-loop="8">8</button>
+                            <button class="long-loop-button loop-button" data-long-loop="16">16</button>
+                            <button class="long-loop-button loop-button" data-long-loop="32">32</button>
+                        </div>
+                    </div>
+                    
+                    <div class="volume-controls">
+                        <div class="section-title">Group Volumes</div>
+                        
+                    </div>
+                    
+                    <div class="folder-controls">
+                        <div class="section-title">Sample Library</div>
+                        <button id="selectFolderBtn" class="folder-button">Select Sample Folder</button>
+                        <div id="currentFolderDisplay" class="current-folder">Current: mykicks</div>
+                    </div>
+                    
+                    <div class="midi-controls">
+                        <button id="midiSettingsBtn" class="arrangement-button">MIDI Settings</button>
+                    </div>
+                    
+                    <div class="theme-controls">
+                        <div class="theme-toggle-container">
+                            <div class="section-title">App Themes</div>
+                            <label class="switch">
+                                <input type="checkbox" id="themeToggle">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="theme-buttons" id="themeButtonsContainer">
+                            <button class="theme-button" data-theme="default">Default</button>
+                            <button class="theme-button" data-theme="dark">Dark</button>
+                            <button class="theme-button" data-theme="blue">Blue</button>
+                            <button class="theme-button" data-theme="green">Green</button>
+                            <button class="theme-button" data-theme="purple">Purple</button>
+                            <button class="theme-button" data-theme="red">Red</button>
+                            <button class="theme-button" data-theme="orange">Orange</button>
+                            <button class="theme-button" data-theme="pink">Pink</button>
+                            <button class="theme-button" data-theme="cyan">Cyan</button>
+                        </div>
+                    </div>
+                    
+                    <div class="arrangement-controls">
+                        <button id="arrangementButton" class="arrangement-button" onclick="ElectronAppNav.openArrangement()">Arrangement</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+            
+        <div class="grid-panel">
+            <div class="button-grid" id="buttonGrid">
+                
+            </div>
+        </div>
+        
+        <!-- Bar Counter -->
+        <div class="bar-counter" id="barCounter">
+            <div class="bar-counter-label">Position:</div>
+            <div class="bar-counter-display" id="barCounterDisplay">0.0</div>
+        </div>
+    </div>
+
+    <!-- MIDI Settings Modal -->
+    <div id="midiModal" class="midi-modal" style="display: none;">
+        <div class="midi-modal-content">
+            <div class="midi-modal-header">
+                <h3>🎹 MIDI & Performance Settings</h3>
+                <button class="midi-modal-close">&times;</button>
+            </div>
+            <div class="midi-modal-body">
+                <!-- MIDI Device Status -->
+                <div class="midi-section">
+                    <h4>MIDI Devices</h4>
+                    <div id="midiDeviceList" class="midi-device-list">
+                        <p class="midi-status">No MIDI devices detected</p>
+                    </div>
+                </div>
+
+                <!-- Performance Mode -->
+                <div class="midi-section">
+                    <h4>Performance Mode</h4>
+                    <button id="performanceModeBtn" class="midi-btn">Enable Performance Mode</button>
+                    <p class="midi-hint">Preloads all samples for zero-latency playback</p>
+                </div>
+
+                <!-- Metronome -->
+                <div class="midi-section">
+                    <h4>Metronome</h4>
+                    <button id="metronomeBtn" class="midi-btn">Enable Metronome</button>
+                    <p class="midi-hint">Beat-synced click track with downbeat emphasis</p>
+                </div>
+
+                <!-- MIDI Note Mapping Info -->
+                <div class="midi-section">
+                    <h4>MIDI Note Mapping</h4>
+                    <p class="midi-hint">C3 (MIDI 48) → Sample 1<br>Notes map sequentially up to Sample 32</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    
+    <!-- Production Logger (MUST BE FIRST) -->
+    <script src="./production-logger.js"></script>
+    
+    <!-- Professional DAW Systems -->
+    <script src="./error-handler.js"></script>
+    <script src="./notification-system.js"></script>
+    <script src="./keyboard-shortcuts.js"></script>
+    <script src="./undo-redo-system.js"></script>
+    <script src="./auto-save-system.js"></script>
+    <script src="./performance-monitor.js"></script>
+    <script src="./performance-optimizer.js"></script>
+    <script src="./loading-states.js"></script>
+    <script src="./crash-recovery-system.js"></script>
+    <script src="./live-performance.js"></script>
+    
+    <!-- Core Application Scripts -->
+    <script src="./electron-nav.js"></script>
+    <script src="./security-updated.js"></script>
+    <script src="./folder-management.js"></script>
+    <script src="./folder-audio-loader.js"></script>
+    
+    <script src="./NewRelease/script.js"></script>
+    <script src="./PsychologicalStudio/script.js"></script>
+    
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('./service-worker.js')
+                    .then(registration => {
+                        // Service worker registered
+                    })
+                    .catch(err => {
+                        // Service worker registration failed
+                    });
+            });
+        }
+    </script>
+</body>
+
+</html>

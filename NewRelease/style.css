@@ -1,0 +1,52 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    overflow: hidden;
+    background: black;
+}
+
+canvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+#latestrelease {
+    position: relative;
+    color: white;
+    align-items: center;
+    top: 0;
+    left: 0;
+    transform: translate(0%, 0);
+    font-family: 'Arial', sans-serif;
+    z-index: 1;
+    flex-wrap: wrap;
+}
+
+#container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+#trackname {
+    z-index: 2;
+    color: darkgray;
+}
+img {
+    height: 300px;
+    width: 300px;
+    border-radius: 10px;
+    z-index: 2;
+    margin-bottom: 30px;
+}
+
+#audioid {
+    display: flex;
+}

@@ -1,0 +1,66 @@
+name: Build macOS DMG
+
+on:
+  workflow_dispatch:  # Manual trigger
+  push:
+    tags:
+      - 'v*'  # Trigger on version tags
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+      
+      - name: Generate icon.icns (if needed)
+        run: |
+          if [ ! -f "icon.icns" ] && [ -f "icon.png" ]; then
+            echo "Generating icon.icns from icon.png..."
+            npm install -g png2icons
+            npx png2icons icon.png icon.icns -icns
+          fi
+      
+      - name: Build macOS DMG (Universal Binary)
+        run: npm run build-mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: List build outputs
+        run: |
+          echo "Build completed. Listing dist folder:"
+          ls -lh dist/
+      
+      - name: Upload DMG artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: Psychological-Studio-macOS-Universal
+          path: dist/*.dmg
+          retention-days: 30
+      
+      - name: Upload .app artifact (optional)
+        uses: actions/upload-artifact@v3
+        with:
+          name: Psychological-Studio-macOS-App
+          path: dist/mac-universal/*.app
+          retention-days: 7
+      
+      - name: Get DMG info
+        run: |
+          DMG_FILE=$(ls dist/*.dmg | head -n 1)
+          DMG_SIZE=$(du -h "$DMG_FILE" | cut -f1)
+          echo "✅ DMG created successfully!"
+          echo "📦 File: $DMG_FILE"
+          echo "📊 Size: $DMG_SIZE"
+          echo ""
+          echo "::notice title=Build Success::macOS DMG built successfully ($DMG_SIZE)"

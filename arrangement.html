@@ -1,0 +1,4191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:;">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Psychological Studio</title>
+    <link rel="stylesheet" href="arrangement_styles/lfo_automation_tabs.css">
+    <style>
+        :root {
+            --button-hover-bg: #5a5a5a;
+            --accent-color: #007bff;
+            --text-color: #f0f0f0;
+            --border-color: #444;
+            --track-bg: #2a2a3e;
+            --clip-bg: #3a3a5e;
+            --grid-line: #333344;
+            --header-gradient-start: #1a1a1a;
+            --header-gradient-end: #0a0a0a;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: white;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .arrangement-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: linear-gradient(135deg, var(--header-gradient-start, #16213e) 0%, var(--header-gradient-end, #0f3460) 100%);
+            border-bottom: 2px solid var(--accent-color, #533483);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            flex-shrink: 0;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .arrangement-header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+        }
+
+        .arrangement-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            flex-grow: 1;
+            min-width: 0;
+        }
+
+        .arrangement-header-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .arrangement-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .arr-btn {
+            padding: 8px 16px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .arr-btn:hover {
+            background: var(--button-hover-bg);
+            transform: translateY(-1px);
+        }
+
+        .arr-play-btn {
+            background: #4CAF50;
+        }
+
+        .arr-play-btn:hover {
+            background: #45a049;
+        }
+
+        .arr-stop-btn {
+            background: #f44336;
+        }
+
+        .arr-stop-btn:hover {
+            background: #da190b;
+        }
+
+        .arr-back-btn {
+            background: #2196F3;
+        }
+
+        .arr-back-btn:hover {
+            background: #0b7dda;
+        }
+
+        .arr-save-btn {
+            background: #FF9800;
+        }
+
+        .arr-save-btn:hover {
+            background: #F57C00;
+        }
+
+        .arr-danger {
+            background: #ff5722;
+        }
+
+        .arr-danger:hover {
+            background: #e64a19;
+        }
+
+        .arr-new-sample-btn,
+        .arr-new-pattern-btn {
+            background: #9C27B0;
+        }
+
+        .arr-new-sample-btn:hover,
+        .arr-new-pattern-btn:hover {
+            background: #7B1FA2;
+        }
+
+        .arr-tempo-display, .arr-time-display {
+            padding: 8px 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #fff;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Toolbar */
+        .arrangement-toolbar {
+            display: flex;
+            gap: 20px;
+            padding: 12px 20px;
+            background: #1a1a1a;
+            border-bottom: 1px solid var(--border-color);
+            flex-wrap: wrap;
+        }
+
+        .toolbar-row {
+            display: contents;
+        }
+
+        .arr-tool-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .arr-tool-group label {
+            font-size: 13px;
+            color: #ccc;
+        }
+
+        .arr-select {
+            padding: 6px 10px;
+            background: var(--button-bg);
+            color: white;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 13px;
+            min-width: 150px;
+        }
+
+        .arr-new-pattern-btn {
+            background: #9C27B0;
+        }
+
+        .arr-new-pattern-btn:hover {
+            background: #7B1FA2;
+        }
+
+        /* Workspace */
+        .arrangement-workspace {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+            position: relative;
+            min-height: 0;
+        }
+
+        .arrangement-sidebar {
+            width: 120px;
+            min-height: 70px;
+            background: #1a1a1a;
+            border-right: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .sidebar-timeline-spacer {
+            height: 70px;
+            background: #1a1a1a;
+            border-bottom: 2px solid var(--border-color);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 5px;
+        }
+
+        .edit-mode-group {
+            display: flex;
+            gap: 14px;
+            font-size: 14px;
+            min-height: 70px;
+            align-items: center;
+        }
+
+        .edit-mode-option {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            cursor: pointer;
+        }
+
+        .edit-mode-option input[type="radio"] {
+            cursor: pointer;
+        }
+
+        .edit-mode-option label {
+            cursor: pointer;
+            color: #fff;
+            font-weight: 500;
+        }
+
+        .track-headers {
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            overflow-x: hidden;
+            flex: 1;
+            min-height: 0;
+            scrollbar-width: none; /* Firefox */
+            -ms-overflow-style: none; /* IE/Edge */
+            padding-bottom: 17px; /* Account for horizontal scrollbar on tracks */
+        }
+
+        .track-headers::-webkit-scrollbar {
+            display: none; /* Chrome/Safari */
+        }
+
+        .track-header {
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
+            padding: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: var(--track-bg);
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .track-header.selected {
+            background: var(--accent-color);
+        }
+
+        .track-name {
+            color: white;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .track-controls {
+            display: flex;
+            gap: 2px;
+            flex-wrap: nowrap;
+        }
+
+        .track-btn {
+            padding: 1px 4px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 2px;
+            cursor: pointer;
+            font-size: 8px;
+            min-width: 28px;
+            flex-shrink: 0;
+        }
+
+        .track-btn:hover {
+            background: #764ba2;
+        }
+
+        /* Main Area */
+        .arrangement-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background: #0a0a0a;
+            position: relative;
+            min-height: 0;
+        }
+
+        .timeline-scroll-wrapper {
+            height: 70px;
+            overflow-x: scroll;
+            overflow-y: hidden;
+            background: #1a1a1a;
+            border-bottom: 2px solid var(--border-color);
+            flex-shrink: 0;
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-color) #1a1a1a;
+        }
+
+        .timeline-scroll-wrapper::-webkit-scrollbar {
+            height: 16px !important;
+        }
+
+        .timeline-scroll-wrapper::-webkit-scrollbar-track {
+            background: #1a1a1a !important;
+        }
+
+        .timeline-scroll-wrapper::-webkit-scrollbar-thumb {
+            background: var(--accent-color) !important;
+            border-radius: 8px;
+            border: 3px solid #1a1a1a;
+        }
+
+        .timeline-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+            background: var(--button-hover-bg) !important;
+        }
+
+        .arrangement-timeline {
+            height: 70px;
+            background: #1a1a1a;
+            cursor: pointer;
+            display: block;
+        }
+
+        .arrangement-tracks {
+            flex: 1;
+            overflow-x: scroll;
+            overflow-y: auto;
+            position: relative;
+            width: 100%;
+            min-height: 0;
+            scrollbar-width: auto;
+            scrollbar-color: var(--accent-color) #1a1a1a;
+        }
+
+        .arrangement-tracks-container {
+            position: relative;
+            min-width: 5000px;
+            display: flex;
+            flex-direction: column;
+            flex-shrink: 0;
+        }
+
+        .track-lane {
+            height: 60px;
+            min-height: 60px;
+            max-height: 60px;
+            min-width: 5000px;
+            border-bottom: 2px solid var(--border-color);
+            position: relative;
+            background: var(--track-bg);
+            box-sizing: border-box;
+            flex-shrink: 0;
+        }
+
+        .track-lane-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Playhead */
+        .playhead-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 100%;
+            background: var(--playhead-color, #007bff);
+            pointer-events: none;
+            z-index: 100;
+            box-shadow: 0 0 8px var(--playhead-shadow, rgba(0, 123, 255, 0.8));
+            display: block;
+            opacity: 0.7;
+        }
+
+        .playhead-line.playing {
+            opacity: 1;
+        }
+
+        .playhead-handle {
+            position: absolute;
+            top: 0;
+            left: -6px;
+            width: 15px;
+            height: 15px;
+            background: var(--playhead-color, #007bff);
+            border-radius: 50%;
+            box-shadow: 0 0 8px var(--playhead-shadow, rgba(0, 123, 255, 0.8));
+        }
+
+        /* Clips */
+        .clip {
+            position: absolute;
+            height: 50px;
+            top: 5px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: 2px solid #8B0000;
+            border-radius: 5px;
+            cursor: move;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            color: white;
+            font-size: 11px;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            box-sizing: border-box;
+        }
+
+        .clip.sample {
+            background: #000000;
+        }
+
+        .clip.pattern {
+            background: #0a0a0a;
+        }
+
+        .clip:hover {
+            border-color: #FFD700;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Pattern Editor Popup */
+        .pattern-popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #171717;
+            border: 1px solid #444;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            z-index: 10001;
+            color: #ca006c;
+            font-family: Arial, sans-serif;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            max-width: 90vw;
+            max-height: 90vh;
+            width: 900px;
+        }
+
+        .pattern-popup.active {
+            display: flex;
+        }
+
+        .pattern-editor {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .pattern-popup .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #2f2f2f;
+            border-bottom: 1px solid #444;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .pattern-popup .popup-header h3 {
+            margin: 0;
+            font-size: 16px;
+            color: #ca006c;
+        }
+
+        .pattern-name-input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            background: #333333;
+            border: 1px solid #555;
+            border-radius: 4px;
+            color: white;
+            font-size: 14px;
+        }
+
+        .pattern-popup .popup-content {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+            -webkit-user-select: none;
+            user-select: none;
+            background-color: #171717;
+        }
+
+        .pattern-popup .popup-content::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        .pattern-popup .popup-content::-webkit-scrollbar-track {
+            background: #1a1a1a;
+        }
+
+        .pattern-popup .popup-content::-webkit-scrollbar-thumb {
+            background: #666666;
+            border-radius: 6px;
+            border: 2px solid #1a1a1a;
+        }
+
+        .pattern-popup .popup-content::-webkit-scrollbar-thumb:hover {
+            background: #888888;
+        }
+
+        /* Piano roll styling - Full Implementation */
+        .piano-roll-container {
+            display: flex;
+            flex-direction: column;
+            max-height: none;
+            margin-top: 0;
+            position: relative;
+            overflow: visible;
+            overflow-x: hidden;
+            background: transparent;
+            border-radius: 0;
+        }
+        
+        .piano-roll-grid-wrapper {
+            flex-shrink: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            height: 270px;
+        }
+        
+        .piano-roll-bar-numbers {
+            display: flex;
+            height: 30px;
+            background: #1a1a1a;
+            border-bottom: 2px solid #444;
+            padding-left: 40px;
+            overflow-x: auto;
+            overflow-y: hidden;
+            position: relative;
+            box-sizing: border-box;
+        }
+        
+        .piano-roll-bar-numbers::-webkit-scrollbar {
+            height: 0px;
+            display: none;
+        }
+        
+        .piano-roll-bar-number {
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            color: #999;
+            border-right: 1px solid #333;
+            font-weight: 600;
+        }
+        
+        .piano-roll-scrollable {
+            display: flex;
+            flex: 1;
+            overflow-y: auto;
+            overflow-x: auto;
+            min-height: 300px;
+            position: relative;
+        }
+        
+        .piano-keys {
+            width: 40px;
+            background: linear-gradient(135deg, #2a2a2a 0%, #1a1a1a 100%);
+            flex-shrink: 0;
+            position: sticky;
+            left: 0;
+            z-index: 10;
+            box-shadow: 2px 0 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .piano-key {
+            height: 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: #aaa;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .piano-key.white {
+            background: linear-gradient(135deg, #3a3a3a 0%, #2a2a2a 100%);
+            color: #ddd;
+        }
+        
+        .piano-key.black {
+            background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);
+            color: #fff;
+            height: 12px;
+            margin: 4px 0;
+            z-index: 2;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        
+        .piano-key:hover {
+            background: linear-gradient(135deg, #4a4a4a 0%, #3a3a3a 100%);
+            box-shadow: inset 0 0 8px rgba(255, 255, 255, 0.1);
+        }
+        
+        .piano-key.active {
+            background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 100%);
+            box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+        }
+        
+        .piano-roll-grid-container {
+            flex-grow: 1;
+            position: relative;
+            overflow: visible;
+            min-height: 100%;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+            border-radius: 8px;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+        
+        .piano-roll-grid {
+            position: relative;
+            background: linear-gradient(135deg, #2c2c2c 0%, #1e1e1e 100%);
+            display: grid;
+            grid-auto-rows: 20px;
+            width: 100%;
+            height: auto;
+            min-height: 1680px;
+            border-radius: 6px;
+        }
+        
+        .piano-roll-cell {
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+            position: relative;
+            min-width: 20px;
+            background: #2a2a2a;
+        }
+        
+        .piano-roll-cell:hover {
+            background: #3a3a3a;
+        }
+        
+        .piano-roll-cell.beat-start {
+            border-left: 1px solid #000;
+        }
+        
+        .piano-roll-cell.bar-start {
+            border-left: 3px solid #000 !important;
+        }
+        
+        .piano-roll-cell.bar-end {
+            border-right: 3px solid #000;
+        }
+        
+        .piano-roll-cell.active {
+            background: #DC143C;
+            border: 1px solid #B22222;
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 8px rgba(220, 20, 60, 0.6);
+        }
+        
+        .piano-roll-cell.note-long {
+            background: #DC143C;
+            border: 1px solid #B22222;
+        }
+        
+        @keyframes pulse {
+            0% { box-shadow: 0 0 8px rgba(220, 20, 60, 0.6); }
+            50% { box-shadow: 0 0 12px rgba(220, 20, 60, 0.8); }
+            100% { box-shadow: 0 0 8px rgba(220, 20, 60, 0.6); }
+        }
+        
+        .piano-roll-controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px;
+            background: #1a1a1a;
+            border-top: 2px solid #444;
+            flex-shrink: 0;
+        }
+        
+        .piano-roll-controls-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .piano-roll-sound-source {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .piano-roll-sound-source label {
+            color: white;
+            font-size: 13px;
+        }
+        
+        .piano-roll-sound-source select {
+            color: white;
+            background-color: #333;
+            border: 1px solid #555;
+            padding: 5px 10px;
+            border-radius: 4px;
+        }
+        
+        .piano-roll-grid-size {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .piano-roll-grid-size label {
+            color: white;
+            font-size: 13px;
+        }
+        
+        .piano-roll-grid-size button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .piano-roll-grid-size button:hover {
+            background: var(--button-hover-bg);
+        }
+        
+        .piano-roll-note-length {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .piano-roll-note-length label {
+            color: white;
+            font-size: 13px;
+        }
+        
+        .piano-roll-note-length button {
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .piano-roll-preview-controls {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .piano-roll-preview-controls button {
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .piano-roll-preview-controls button:hover {
+            background-color: #45a049;
+        }
+        
+        .piano-roll-clear-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+        
+        .piano-roll-clear-btn:hover {
+            background-color: #d32f2f;
+        }
+        
+        .piano-roll-visualizer {
+            width: 200px;
+            height: 60px;
+            background: #0a0a0a;
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+        
+        /* Sound Design Controls */
+        .sound-design-controls {
+            margin-top: 0;
+            padding: 15px;
+            background: rgba(220, 20, 60, 0.08);
+            border-radius: 8px;
+            border: 1px solid rgba(220, 20, 60, 0.25);
+            flex-shrink: 0;
+        }
+        
+        .sound-design-controls h4 {
+            margin-top: 0;
+            color: #DC143C;
+            margin-bottom: 15px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        
+        .sound-design-controls h5 {
+            color: #DC143C;
+            margin: 10px 0;
+            font-size: 13px;
+        }
+        
+        .sound-design-controls .sd-row {
+            margin-bottom: 10px;
+        }
+        
+        .sound-design-controls label {
+            color: #FF6B9D;
+            font-size: 13px;
+        }
+        
+        /* Container-specific slider colors */
+        
+        /* Master Volume - Green */
+        .sound-design-controls div[style*="rgba(76, 175, 80"] input[type="range"] {
+            background: linear-gradient(90deg, #388E3C 0%, #66BB6A 100%) !important;
+        }
+        .sound-design-controls div[style*="rgba(76, 175, 80"] input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(90deg, #388E3C 0%, #66BB6A 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        .sound-design-controls div[style*="rgba(76, 175, 80"] input[type="range"]::-webkit-slider-thumb {
+            background: #66BB6A !important;
+            border: 2px solid #81C784;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(76, 175, 80"] input[type="range"]::-moz-range-thumb {
+            background: #66BB6A !important;
+            border: 2px solid #81C784;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(76, 175, 80"] input[type="range"]::-moz-range-track {
+            background: linear-gradient(90deg, #388E3C 0%, #66BB6A 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        /* Oscillators - Blue */
+        .sound-design-controls div[style*="rgba(33, 150, 243"] input[type="range"] {
+            background: linear-gradient(90deg, #1976D2 0%, #42A5F5 100%) !important;
+        }
+        .sound-design-controls div[style*="rgba(33, 150, 243"] input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(90deg, #1976D2 0%, #42A5F5 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        .sound-design-controls div[style*="rgba(33, 150, 243"] input[type="range"]::-webkit-slider-thumb {
+            background: #42A5F5 !important;
+            border: 2px solid #64B5F6;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(33, 150, 243"] input[type="range"]::-moz-range-thumb {
+            background: #42A5F5 !important;
+            border: 2px solid #64B5F6;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(33, 150, 243"] input[type="range"]::-moz-range-track {
+            background: linear-gradient(90deg, #1976D2 0%, #42A5F5 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        /* Filter - Yellow/Amber */
+        .sound-design-controls div[style*="rgba(255, 193, 7"] input[type="range"] {
+            background: linear-gradient(90deg, #F57C00 0%, #FFB300 100%) !important;
+        }
+        .sound-design-controls div[style*="rgba(255, 193, 7"] input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(90deg, #F57C00 0%, #FFB300 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        .sound-design-controls div[style*="rgba(255, 193, 7"] input[type="range"]::-webkit-slider-thumb {
+            background: #FFB300 !important;
+            border: 2px solid #FFD54F;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(255, 193, 7"] input[type="range"]::-moz-range-thumb {
+            background: #FFB300 !important;
+            border: 2px solid #FFD54F;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(255, 193, 7"] input[type="range"]::-moz-range-track {
+            background: linear-gradient(90deg, #F57C00 0%, #FFB300 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        /* Unison - Purple */
+        .sound-design-controls div[style*="rgba(156, 39, 176"] input[type="range"] {
+            background: linear-gradient(90deg, #7B1FA2 0%, #AB47BC 100%) !important;
+        }
+        .sound-design-controls div[style*="rgba(156, 39, 176"] input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(90deg, #7B1FA2 0%, #AB47BC 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        .sound-design-controls div[style*="rgba(156, 39, 176"] input[type="range"]::-webkit-slider-thumb {
+            background: #AB47BC !important;
+            border: 2px solid #BA68C8;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(156, 39, 176"] input[type="range"]::-moz-range-thumb {
+            background: #AB47BC !important;
+            border: 2px solid #BA68C8;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(156, 39, 176"] input[type="range"]::-moz-range-track {
+            background: linear-gradient(90deg, #7B1FA2 0%, #AB47BC 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        /* PWM - Orange */
+        .sound-design-controls div[style*="rgba(255, 152, 0"] input[type="range"] {
+            background: linear-gradient(90deg, #F57C00 0%, #FFA726 100%) !important;
+        }
+        .sound-design-controls div[style*="rgba(255, 152, 0"] input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(90deg, #F57C00 0%, #FFA726 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        .sound-design-controls div[style*="rgba(255, 152, 0"] input[type="range"]::-webkit-slider-thumb {
+            background: #FFA726 !important;
+            border: 2px solid #FFB74D;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(255, 152, 0"] input[type="range"]::-moz-range-thumb {
+            background: #FFA726 !important;
+            border: 2px solid #FFB74D;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(255, 152, 0"] input[type="range"]::-moz-range-track {
+            background: linear-gradient(90deg, #F57C00 0%, #FFA726 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        /* Envelope - Red */
+        .sound-design-controls div[style*="rgba(244, 67, 54"] input[type="range"] {
+            background: linear-gradient(90deg, #D32F2F 0%, #E57373 100%) !important;
+        }
+        .sound-design-controls div[style*="rgba(244, 67, 54"] input[type="range"]::-webkit-slider-runnable-track {
+            background: linear-gradient(90deg, #D32F2F 0%, #E57373 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        .sound-design-controls div[style*="rgba(244, 67, 54"] input[type="range"]::-webkit-slider-thumb {
+            background: #E57373 !important;
+            border: 2px solid #EF5350;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(244, 67, 54"] input[type="range"]::-moz-range-thumb {
+            background: #E57373 !important;
+            border: 2px solid #EF5350;
+            border-radius: 50%;
+        }
+        .sound-design-controls div[style*="rgba(244, 67, 54"] input[type="range"]::-moz-range-track {
+            background: linear-gradient(90deg, #D32F2F 0%, #E57373 100%);
+            height: 8px;
+            border-radius: 4px;
+        }
+        
+        /* Default slider styles */
+        .sound-design-controls input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #8B0000 0%, #DC143C 100%) !important;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            flex: 1;
+            min-width: 100px;
+        }
+        
+        .sound-design-controls input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #DC143C !important;
+            cursor: pointer;
+            border: 2px solid #FF1744;
+            margin-top: -4px;
+        }
+        
+        .sound-design-controls input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #DC143C !important;
+            cursor: pointer;
+            border: 2px solid #FF1744;
+        }
+        
+        .sound-design-controls span {
+            color: #FF6B9D;
+            font-size: 12px;
+            min-width: 60px;
+            text-align: right;
+        }
+        
+        .sound-design-controls select {
+            width: 100%;
+            max-width: 200px;
+            background-color: #333;
+            color: #fff;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 5px;
+        }
+
+        .pattern-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 15px;
+            background-color: #2f2f2f;
+            border-top: 1px solid #444;
+        }
+
+        .pattern-buttons .arr-btn {
+            padding: 8px 16px;
+            background-color: #444;
+            border: 1px solid #666;
+            border-radius: 4px;
+            color: #ca006c;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .pattern-buttons .arr-btn:hover {
+            background-color: #555;
+            border-color: #888;
+        }
+
+        .pattern-buttons .arr-save-btn,
+        .pattern-buttons .arr-save-midi-btn,
+        .pattern-buttons .arr-save-sample-btn {
+            background-color: #3a3a3a;
+            color: #ca006c;
+        }
+
+        .pattern-buttons .arr-save-btn:hover,
+        .pattern-buttons .arr-save-midi-btn:hover,
+        .pattern-buttons .arr-save-sample-btn:hover {
+            background-color: #4a4a4a;
+        }
+
+        /* Piano Roll Scrollbar */
+        .piano-roll-container::-webkit-scrollbar,
+        .piano-roll-scrollable::-webkit-scrollbar,
+        .sound-design-controls::-webkit-scrollbar {
+            width: 12px !important;
+            height: 12px !important;
+        }
+
+        .piano-roll-container::-webkit-scrollbar-track,
+        .piano-roll-scrollable::-webkit-scrollbar-track,
+        .sound-design-controls::-webkit-scrollbar-track {
+            background: #1a1a1a !important;
+            border-radius: 0;
+        }
+
+        .piano-roll-container::-webkit-scrollbar-thumb,
+        .piano-roll-scrollable::-webkit-scrollbar-thumb,
+        .sound-design-controls::-webkit-scrollbar-thumb {
+            background: #DC143C !important;
+            border-radius: 6px;
+            border: 2px solid #1a1a1a;
+        }
+
+        .piano-roll-container::-webkit-scrollbar-thumb:hover,
+        .piano-roll-scrollable::-webkit-scrollbar-thumb:hover,
+        .sound-design-controls::-webkit-scrollbar-thumb:hover {
+            background: #ff1744 !important;
+        }
+
+        /* Scrollbar - Make it VERY visible */
+        .arrangement-tracks::-webkit-scrollbar,
+        .track-headers::-webkit-scrollbar {
+            width: 16px !important;
+            height: 16px !important;
+        }
+
+        .arrangement-tracks::-webkit-scrollbar-track,
+        .track-headers::-webkit-scrollbar-track {
+            background: #1a1a1a !important;
+            border-radius: 0;
+        }
+
+        .arrangement-tracks::-webkit-scrollbar-thumb,
+        .track-headers::-webkit-scrollbar-thumb {
+            background: var(--accent-color) !important;
+            border-radius: 8px;
+            border: 3px solid #1a1a1a;
+            min-height: 40px;
+        }
+
+        .arrangement-tracks::-webkit-scrollbar-thumb:hover,
+        .track-headers::-webkit-scrollbar-thumb:hover {
+            background: var(--button-hover-bg) !important;
+            border: 3px solid #1a1a1a;
+        }
+
+        .arrangement-tracks::-webkit-scrollbar-corner {
+            background: #1a1a1a;
+        }
+
+        /* Force scrollbar to always show */
+        .arrangement-tracks::-webkit-scrollbar-thumb:horizontal {
+            background: var(--accent-color) !important;
+        }
+
+        /* Responsive Design - Tablet (768px and below) */
+        @media screen and (max-width: 768px) {
+            .arrangement-header {
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .arrangement-header-left,
+            .arrangement-header-right {
+                gap: 8px;
+            }
+
+            .arrangement-title {
+                font-size: 20px;
+            }
+
+            .arrangement-controls {
+                gap: 8px;
+            }
+
+            .arr-btn {
+                padding: 6px 10px;
+                font-size: 11px;
+            }
+
+            .arr-tempo-display,
+            .arr-time-display {
+                font-size: 11px;
+            }
+
+            #arr-bpm-slider {
+                width: 80px !important;
+            }
+
+            .arrangement-toolbar {
+                flex-wrap: wrap;
+                padding: 10px;
+                gap: 10px;
+            }
+
+            .arr-tool-group {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .arrangement-sidebar {
+                width: 80px;
+            }
+
+            .track-header {
+                padding: 6px;
+            }
+
+            .track-name {
+                font-size: 10px;
+                word-break: break-word;
+            }
+        }
+
+        /* Responsive Design - Mobile (480px and below) */
+        @media screen and (max-width: 480px) {
+            .arrangement-header {
+                display: grid;
+                grid-template-columns: 1fr auto 1fr;
+                grid-template-rows: auto auto auto;
+                gap: 8px;
+                padding: 8px;
+            }
+
+            .arrangement-header-left {
+                display: contents;
+            }
+
+            .arrangement-controls {
+                grid-column: 1 / 2;
+                grid-row: 1 / 2;
+                display: flex;
+                gap: 6px;
+            }
+
+            .arr-tempo-display {
+                grid-column: 1 / 4;
+                grid-row: 2 / 3;
+                display: flex;
+                justify-content: center;
+                gap: 8px;
+            }
+
+            .arrangement-title {
+                grid-column: 2 / 3;
+                grid-row: 1 / 2;
+                font-size: 18px;
+                text-align: center;
+            }
+
+            .arrangement-header-right {
+                display: contents;
+            }
+
+            #arr-back {
+                grid-column: 3 / 4;
+                grid-row: 1 / 2;
+            }
+
+            #arr-clear {
+                grid-column: 3 / 4;
+                grid-row: 3 / 4;
+            }
+
+            .arrangement-controls {
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .arr-btn {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .arr-tempo-display,
+            .arr-time-display {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+
+            #arr-bpm-slider {
+                width: 60px !important;
+            }
+
+            .arrangement-toolbar {
+                padding: 8px;
+                gap: 6px;
+                flex-wrap: nowrap;
+                justify-content: flex-start;
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .toolbar-row {
+                display: flex;
+                gap: 6px;
+            }
+
+            .arr-tool-group {
+                gap: 6px;
+                flex-wrap: nowrap;
+            }
+
+            /* Hide labels on mobile */
+            .arr-tool-label {
+                display: none;
+            }
+
+            /* Make sample/pattern groups more compact */
+            .arr-tool-group:has(#arr-sample-select),
+            .arr-tool-group:has(#arr-pattern-select) {
+                order: -1; /* Move to the left */
+            }
+
+            .arr-select {
+                font-size: 11px;
+                padding: 4px;
+                min-width: 70px;
+                flex: 1;
+            }
+
+            .arr-new-sample-btn,
+            .arr-new-pattern-btn {
+                padding: 4px 8px;
+                font-size: 11px;
+                white-space: nowrap;
+            }
+
+            .arrangement-sidebar {
+                width: 50px;
+                min-height: 70px;
+            }
+
+            .sidebar-timeline-spacer {
+                height: 70px;
+                padding: 4px;
+            }
+
+            .edit-mode-group {
+                flex-direction: column;
+                gap: 8px;
+                font-size: 14px;
+                min-height: 70px;
+                align-items: center;
+            }
+
+            .edit-mode-option {
+                gap: 2px;
+            }
+
+            .edit-mode-option label {
+                font-size: 10px;
+            }
+
+            /* Show abbreviated labels on mobile */
+            .edit-mode-option label::before {
+                content: attr(data-short);
+            }
+
+            .edit-mode-option label {
+                font-size: 0;
+            }
+
+            .edit-mode-option label::before {
+                font-size: 11px;
+                font-weight: 600;
+            }
+
+            .track-header {
+                padding: 4px;
+            }
+
+            .track-name {
+                font-size: 9px;
+                word-break: break-word;
+                line-height: 1.2;
+            }
+
+            .track-controls {
+                gap: 2px;
+            }
+
+            .track-btn {
+                font-size: 7px;
+                padding: 1px 3px;
+                min-width: 24px;
+            }
+
+            .arr-zoom-display {
+                font-size: 11px;
+                padding: 5px 8px;
+            }
+        }
+
+        /* Landscape Mobile */
+        @media screen and (max-height: 500px) and (orientation: landscape) {
+            .arrangement-header {
+                padding: 8px 12px;
+            }
+
+            .arrangement-title {
+                font-size: 16px;
+                margin-bottom: 8px;
+            }
+
+            .arrangement-controls {
+                gap: 6px;
+            }
+
+            .arr-btn {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+
+            .arrangement-toolbar {
+                padding: 6px;
+            }
+        }
+
+        /* ========== FILE MENU STYLES ========== */
+        .file-menu-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .file-menu-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background-color: #1a1a1a;
+            border: 1px solid #555;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            min-width: 180px;
+            margin-top: 5px;
+        }
+
+        .file-menu-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #e0e0e0;
+            font-size: 13px;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+
+        .file-menu-item:hover {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+
+        .file-menu-item:first-child {
+            border-radius: 4px 4px 0 0;
+        }
+
+        .file-menu-item:last-child {
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* ========== CONTEXT MENU STYLES ========== */
+        .context-menu {
+            position: fixed;
+            background-color: #1a1a1a;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.7);
+            z-index: 10000;
+            display: none;
+            min-width: 140px;
+        }
+
+        .context-menu-item {
+            padding: 10px 16px;
+            cursor: pointer;
+            color: #e0e0e0;
+            font-size: 13px;
+            transition: background-color 0.2s;
+            user-select: none;
+        }
+
+        .context-menu-item:hover {
+            background-color: var(--accent-color);
+            color: #ffffff;
+        }
+
+        .context-menu-item:first-child {
+            border-radius: 4px 4px 0 0;
+        }
+
+        .context-menu-item:last-child {
+            border-radius: 0 0 4px 4px;
+        }
+
+        /* ========== EFFECTS POPUP STYLES (from PsychologicalStudio) ========== */
+        /* EXACT PSYCHOLOGICALSTUDIO EFFECTS POPUP STYLES */
+        .effects-popup {
+            position: fixed;
+            background-color: #171717;
+            border: 1px solid #444;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            z-index: 10001;
+            color: #ca006c;
+            font-family: Arial, sans-serif;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            -webkit-user-select: none;
+            user-select: none;
+            max-width: 90vw;
+            max-height: 90vh;
+        }
+
+        .popup-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #2f2f2f;
+            border-bottom: 1px solid #444;
+            border-radius: 8px 8px 0 0;
+        }
+
+        .popup-header h3 {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        .popup-close-btn {
+            background: none;
+            border: none;
+            color: #b15600;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 0;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-shadow: 0px, 0px, 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .popup-content {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* All sliders in popup with consistent dark styling */
+        .popup-content input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #333333 !important;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            width: 100%;
+        }
+
+        .popup-content input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #666666 !important;
+            cursor: pointer;
+            border: 1px solid #888888;
+        }
+
+        .popup-content input[type="range"]::-moz-range-thumb {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #666666 !important;
+            cursor: pointer;
+            border: 1px solid #888888;
+        }
+
+        /* Additional styles for effects popup sliders */
+        .effects-popup input[type="range"] {
+            -webkit-appearance: none;
+            appearance: none;
+            background-color: #333333 !important;
+            height: 8px;
+            border-radius: 4px;
+            outline: none;
+            width: 100%;
+        }
+
+        .effects-popup input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            background: #666666 !important;
+            border: 1px solid #888888;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .effects-popup input[type="range"]::-moz-range-thumb {
+            background: #666666 !important;
+            border: 1px solid #888888;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        /* WAVEFORM PREVIEW SECTION */
+        .effects-waveform-container {
+            padding: 10px 15px;
+            background-color: #0a0a0a;
+            border-bottom: 1px solid #444;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            cursor: crosshair;
+        }
+
+        .effects-waveform-canvas {
+            display: block;
+            width: 100%;
+            height: 80px;
+            background: linear-gradient(to bottom, #1a1a1a, #0f0f0f);
+            border-radius: 4px;
+            border: 1px solid #333;
+        }
+
+        .waveform-time-labels {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            color: #666;
+            padding: 0 5px;
+        }
+
+        /* EFFECT SECTION BASE STYLES WITH COLOR CODING */
+        .effect-section {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .effect-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 14px;
+        }
+
+        .effect-section label {
+            color: #cdcccc;
+        }
+
+        /* Volume Section - Blue Theme */
+        .effect-section:nth-of-type(1) {
+            background-color: rgba(33, 150, 243, 0.1);
+            border-color: rgba(33, 150, 243, 0.3);
+        }
+        
+        .effect-section:nth-of-type(1) h4 {
+            color: #2196F3;
+        }
+        
+        .effect-section:nth-of-type(1) .slider-container label {
+            color: #64B5F6;
+        }
+        
+        .effect-section:nth-of-type(1) input[type="range"] {
+            background: linear-gradient(90deg, #1565C0 0%, #2196F3 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(1) input[type="range"]::-webkit-slider-thumb {
+            background: #2196F3 !important;
+        }
+        
+        .effect-section:nth-of-type(1) input[type="range"]::-moz-range-thumb {
+            background: #2196F3 !important;
+        }
+        
+        .effect-section:nth-of-type(1) span {
+            color: #90CAF9 !important;
+        }
+
+        /* Speed Section - Green Theme */
+        .effect-section:nth-of-type(2) {
+            background-color: rgba(76, 175, 80, 0.1);
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+        
+        .effect-section:nth-of-type(2) h4 {
+            color: #4CAF50;
+        }
+        
+        .effect-section:nth-of-type(2) label {
+            color: #81C784;
+        }
+        
+        .effect-section:nth-of-type(2) select {
+            background-color: rgba(46, 125, 50, 0.5);
+            border-color: rgba(76, 175, 80, 0.5);
+        }
+
+        /* Delay Section - Orange Theme */
+        .effect-section:nth-of-type(3) {
+            background-color: rgba(244, 89, 54, 0.1);
+            border-color: rgba(255, 152, 0, 0.3);
+        }
+        
+        .effect-section:nth-of-type(3) h4 {
+            color: #F44336;
+        }
+        
+        .effect-section:nth-of-type(3) .slider-container label {
+            color: #FF9800;
+        }
+        
+        .effect-section:nth-of-type(3) input[type="range"] {
+            background: linear-gradient(90deg, #9d3700ff 0%, #b06900ff 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(3) input[type="range"]::-webkit-slider-thumb {
+            background: #F44336 !important;
+        }
+        
+        .effect-section:nth-of-type(3) input[type="range"]::-moz-range-thumb {
+            background: #F44336 !important;
+        }
+        
+        .effect-section:nth-of-type(3) span {
+            color: #F44336 !important;
+        }
+
+        /* Reverb Section - Teal Theme */
+        .effect-section:nth-of-type(4) {
+            background-color: rgba(0, 150, 136, 0.1);
+            border-color: rgba(0, 150, 136, 0.3);
+        }
+        
+        .effect-section:nth-of-type(4) h4 {
+            color: #009688;
+        }
+        
+        .effect-section:nth-of-type(4) .slider-container label {
+            color: #4DB6AC;
+        }
+        
+        .effect-section:nth-of-type(4) input[type="range"] {
+            background: linear-gradient(90deg, #00695C 0%, #009688 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(4) input[type="range"]::-webkit-slider-thumb {
+            background: #009688 !important;
+        }
+        
+        .effect-section:nth-of-type(4) input[type="range"]::-moz-range-thumb {
+            background: #009688 !important;
+        }
+        
+        .effect-section:nth-of-type(4) span {
+            color: #80CBC4 !important;
+        }
+
+        /* EQ Section - Red Theme */
+        .effect-section:nth-of-type(5) {
+            background-color: rgba(244, 67, 54, 0.1);
+            border-color: rgba(244, 67, 54, 0.3);
+        }
+        
+        .effect-section:nth-of-type(5) h4 {
+            color: #F44336;
+        }
+        
+        .effect-section:nth-of-type(5) .slider-container label {
+            color: #EF5350;
+        }
+        
+        .effect-section:nth-of-type(5) input[type="range"] {
+            background: linear-gradient(90deg, #C62828 0%, #F44336 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(5) input[type="range"]::-webkit-slider-thumb {
+            background: #F44336 !important;
+        }
+        
+        .effect-section:nth-of-type(5) input[type="range"]::-moz-range-thumb {
+            background: #F44336 !important;
+        }
+        
+        .effect-section:nth-of-type(5) span {
+            color: #EF5350 !important;
+        }
+
+        /* Filter Section - Cyan Theme */
+        .effect-section:nth-of-type(6) {
+            background-color: rgba(0, 188, 212, 0.1);
+            border-color: rgba(0, 188, 212, 0.3);
+        }
+        
+        .effect-section:nth-of-type(6) h4 {
+            color: #00BCD4;
+        }
+        
+        .effect-section:nth-of-type(6) .slider-container label {
+            color: #4DD0E1;
+        }
+        
+        .effect-section:nth-of-type(6) input[type="range"] {
+            background: linear-gradient(90deg, #00838F 0%, #00BCD4 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(6) input[type="range"]::-webkit-slider-thumb {
+            background: #00BCD4 !important;
+        }
+        
+        .effect-section:nth-of-type(6) input[type="range"]::-moz-range-thumb {
+            background: #00BCD4 !important;
+        }
+        
+        .effect-section:nth-of-type(6) select {
+            background-color: rgba(0, 131, 143, 0.5);
+            border-color: rgba(0, 188, 212, 0.5);
+        }
+        
+        .effect-section:nth-of-type(6) span {
+            color: #80DEEA !important;
+        }
+
+        /* Pitch Section - Yellow Theme */
+        .effect-section:nth-of-type(7) {
+            background-color: rgba(255, 193, 7, 0.1);
+            border-color: rgba(255, 193, 7, 0.3);
+        }
+        
+        .effect-section:nth-of-type(7) h4 {
+            color: #FFC107;
+        }
+        
+        .effect-section:nth-of-type(7) .slider-container label {
+            color: #FFD54F;
+        }
+        
+        .effect-section:nth-of-type(7) input[type="range"] {
+            background: linear-gradient(90deg, #F57F17 0%, #FFC107 100%) !important;
+        }
+        
+        .effect-section:nth-of-type(7) input[type="range"]::-webkit-slider-thumb {
+            background: #FFC107 !important;
+        }
+        
+        .effect-section:nth-of-type(7) input[type="range"]::-moz-range-thumb {
+            background: #FFC107 !important;
+        }
+        
+        .effect-section:nth-of-type(7) span {
+            color: #FFE082 !important;
+        }
+
+        .slider-container {
+            margin-bottom: 10px;
+        }
+
+        .slider-container label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+        }
+
+        .slider-container input[type="range"] {
+            width: 100%;
+            margin-bottom: 5px;
+            accent-color: rgb(97, 97, 97);
+        }
+
+        .slider-container span {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: #00bbff;
+        }
+
+        .slider-container select {
+            background-color: #333333;
+            color: #e0e0e0;
+            border: 1px solid #555;
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+            width: 100%;
+        }
+
+        .popup-footer {
+            padding: 10px 15px;
+            background-color: #2f2f2f;
+            border-top: 1px solid #444;
+            border-radius: 0 0 8px 8px;
+            text-align: right;
+        }
+
+        .popup-reset-btn {
+            background-color: #212121;
+            color: rgb(255, 0, 0);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        .popup-accept-btn {
+            background-color: #212121;
+            color: rgb(183, 255, 0);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .popup-accept-btn:hover {
+            background-color: #0a0384;
+        }
+
+        /* Keep arrangement-specific button classes for compatibility */
+        .arr-btn-apply {
+            background-color: #212121;
+            color: rgb(183, 255, 0);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .arr-btn-apply:hover {
+            background-color: #0a0384;
+        }
+
+        .arr-btn-reset {
+            background-color: #212121;
+            color: rgb(255, 0, 0);
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-right: 10px;
+        }
+
+        /* Visual EQ Styles */
+        .visual-eq-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background-color: #1a1a1a;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .eq-canvas {
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        .eq-frequency-labels {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 5px;
+            font-size: 10px;
+            color: #aaa;
+            pointer-events: none;
+        }
+
+        .eq-gain-labels {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 5px 0;
+            font-size: 10px;
+            color: #9e0064;
+            pointer-events: none;
+        }
+
+        .eq-band-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .eq-band-control {
+            flex: 1;
+            margin: 0 5px;
+        }
+
+        .eq-band-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .eq-band-control input {
+            width: 100%;
+        }
+
+        .eq-band-value {
+            display: block;
+            text-align: center;
+            font-size: 10px;
+            color: #b30074;
+            margin-top: 2px;
+        }
+
+        /* LFO SECTION STYLES - INDIGO THEME FROM PSYCHOLOGICALSTUDIO */
+        .lfo-section {
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            padding-top: 15px;
+            background-color: rgba(63, 81, 181, 0.1);
+            border: 1px solid rgba(63, 81, 181, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .lfo-section h4 {
+            color: #3F51B5;
+        }
+
+        .lfo-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .lfo-tab {
+            flex: 1;
+            padding: 8px 12px;
+            background-color: #2a2a2a;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .lfo-tab:hover {
+            background-color: #333;
+            color: #aaa;
+        }
+
+        .lfo-tab.active {
+            background-color: #3F51B5;
+            color: #ffffff;
+            border-color: #5C6BC0;
+        }
+
+        .lfo-panel {
+            display: none;
+        }
+
+        .lfo-panel.active {
+            display: block;
+        }
+
+        .lfo-control {
+            margin-bottom: 10px;
+        }
+
+        .lfo-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #7986CB;
+        }
+
+        .lfo-control select {
+            width: 100%;
+            background-color: rgba(28, 28, 28, 0.5);
+            color: #e0e0e0;
+            border: 1px solid rgba(178, 35, 35, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .lfo-control input[type="range"] {
+            width: 100%;
+            background: linear-gradient(90deg, #932828ff 0%, #b53f3fff 100%) !important;
+        }
+
+        .lfo-control input[type="range"]::-webkit-slider-thumb {
+            background: #3F51B5 !important;
+        }
+
+        .lfo-control input[type="range"]::-moz-range-thumb {
+            background: #3F51B5 !important;
+        }
+
+        .lfo-target,
+        .lfo-waveform {
+            background-color: rgba(28, 28, 28, 0.5);
+            color: #e0e0e0;
+            border: 1px solid rgba(178, 35, 35, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .lfo-rate-value,
+        .lfo-depth-value {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: #505a94ff !important;
+            margin-top: 2px;
+        }
+
+        .lfo-visualizer {
+            margin-top: 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .lfo-wave {
+            width: 100%;
+            height: 60px;
+            border-radius: 2px;
+        }
+
+        /* AUTOMATION SECTION STYLES - PURPLE THEME FROM PSYCHOLOGICALSTUDIO */
+        .automation-section {
+            margin-top: 20px;
+            border-top: 1px solid #444;
+            padding-top: 15px;
+            background-color: rgba(156, 39, 176, 0.1);
+            border: 1px solid rgba(156, 39, 176, 0.3);
+            border-radius: 8px;
+            padding: 10px;
+        }
+
+        .automation-section h4 {
+            color: #9C27B0;
+        }
+
+        .automation-tabs {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 15px;
+        }
+
+        .automation-tab {
+            flex: 1;
+            padding: 8px 12px;
+            background-color: #2a2a2a;
+            color: #888;
+            border: 1px solid #444;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+
+        .automation-tab:hover {
+            background-color: #333;
+            color: #aaa;
+        }
+
+        .automation-tab.active {
+            background-color: #9C27B0;
+            color: #ffffff;
+            border-color: #AB47BC;
+        }
+
+        .automation-panel {
+            display: none;
+        }
+
+        .automation-panel.active {
+            display: block;
+        }
+
+        .automation-control {
+            margin-bottom: 10px;
+        }
+
+        .automation-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #BA68C8;
+        }
+
+        .automation-control select {
+            width: 100%;
+            background-color: rgba(28, 28, 28, 0.5);
+            color: #e0e0e0;
+            border: 1px solid rgba(156, 39, 176, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .automation-control input[type="range"] {
+            width: 100%;
+            background: linear-gradient(90deg, #6A1B9A 0%, #9C27B0 100%) !important;
+        }
+
+        .automation-control input[type="range"]::-webkit-slider-thumb {
+            background: #9C27B0 !important;
+        }
+
+        .automation-control input[type="range"]::-moz-range-thumb {
+            background: #9C27B0 !important;
+        }
+
+        .automation-target,
+        .automation-curve {
+            background-color: rgba(28, 28, 28, 0.5);
+            color: #e0e0e0;
+            border: 1px solid rgba(156, 39, 176, 0.5);
+            border-radius: 4px;
+            padding: 6px;
+            font-size: 12px;
+        }
+
+        .automation-start-value,
+        .automation-end-value,
+        .automation-duration-value {
+            display: block;
+            text-align: right;
+            font-size: 12px;
+            color: #CE93D8 !important;
+            margin-top: 2px;
+        }
+
+        .automation-visualizer {
+            margin-top: 15px;
+            background-color: #1a1a1a;
+            border: 1px solid #444;
+            border-radius: 4px;
+            padding: 10px;
+        }
+
+        .automation-canvas {
+            width: 100%;
+            height: 100px;
+            border-radius: 2px;
+        }
+                /* Mobile responsive for effects popup */
+        @media screen and (max-width: 768px) {
+            .effects-popup {
+                width: 95vw !important;
+                height: 90vh !important;
+                left: 2.5vw !important;
+                top: 5vh !important;
+            }
+
+            .slider-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .slider-container label {
+                min-width: unset;
+            }
+
+            .slider-container input[type="range"] {
+                width: 100%;
+            }
+        }
+
+        /* LFO/Automation Tab Highlighting */
+        .lfo-tab.active, .automation-tab.active {
+            background: var(--accent-color, #3498db) !important;
+            color: #fff !important;
+            border-bottom: 2px solid var(--accent-color, #3498db) !important;
+            font-weight: bold !important;
+            z-index: 2 !important;
+        }
+
+        .lfo-tab, .automation-tab {
+            background: var(--button-bg, #222) !important;
+            color: var(--text, #ccc) !important;
+            border: none !important;
+            border-bottom: 2px solid transparent !important;
+            cursor: pointer !important;
+            padding: 8px 16px !important;
+            font-size: 14px !important;
+            transition: background 0.2s, color 0.2s, border-bottom 0.2s !important;
+            z-index: 1 !important;
+        }
+
+        .lfo-tab:hover, .automation-tab:hover {
+            background: var(--button-hover-bg, #333) !important;
+        }
+
+        /* ========== BEAUTIFUL POPUPS ========== */
+        
+        /* General popup overlay */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+        }
+
+        .popup-overlay.active {
+            display: flex;
+        }
+
+        /* Popup container */
+        .popup-container {
+            background: linear-gradient(135deg, #1e1e2e 0%, #16213e 100%);
+            border: 2px solid var(--accent-color);
+            border-radius: 12px;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5), 0 0 30px rgba(63, 81, 181, 0.3);
+            animation: popupSlideIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            overflow: hidden;
+        }
+
+        @keyframes popupSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1) translateY(0);
+            }
+        }
+
+        /* Popup header */
+        .popup-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--accent-color) 0%, #0f3460 100%);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .popup-header h2 {
+            margin: 0;
+            color: white;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .popup-close-btn {
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .popup-close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(90deg);
+        }
+
+        /* Popup body */
+        .popup-body {
+            padding: 25px;
+            color: #f0f0f0;
+        }
+
+        .popup-body p {
+            margin: 10px 0;
+            font-size: 14px;
+            line-height: 1.6;
+            color: #d0d0d0;
+        }
+
+        .popup-success-icon {
+            font-size: 48px;
+            text-align: center;
+            margin-bottom: 15px;
+            animation: popupIconBounce 0.6s ease-out;
+        }
+
+        @keyframes popupIconBounce {
+            0% { transform: scale(0); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .popup-content-summary {
+            background: rgba(63, 81, 181, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 13px;
+            color: #e0e0e0;
+        }
+
+        .popup-content-summary strong {
+            color: var(--accent-color);
+        }
+
+        /* Popup footer */
+        .popup-footer {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .popup-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .popup-btn-primary {
+            background: var(--accent-color);
+            color: white;
+        }
+
+        .popup-btn-primary:hover {
+            background: #3a4dc9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(63, 81, 181, 0.4);
+        }
+
+        .popup-btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: #f0f0f0;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .popup-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        .popup-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* New Sample Dialog Specific */
+        .new-sample-dialog .popup-body {
+            text-align: center;
+        }
+
+        .sample-options {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .sample-option-btn {
+            padding: 15px;
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.2) 0%, rgba(156, 39, 176, 0.1) 100%);
+            border: 2px solid rgba(156, 39, 176, 0.4);
+            color: #f0f0f0;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .sample-option-btn:hover {
+            background: linear-gradient(135deg, rgba(156, 39, 176, 0.3) 0%, rgba(156, 39, 176, 0.2) 100%);
+            border-color: rgba(156, 39, 176, 0.6);
+            transform: translateX(3px);
+        }
+
+        .sample-option-btn.upload {
+            border-color: rgba(33, 150, 243, 0.4);
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.2) 0%, rgba(33, 150, 243, 0.1) 100%);
+        }
+
+        .sample-option-btn.upload:hover {
+            background: linear-gradient(135deg, rgba(33, 150, 243, 0.3) 0%, rgba(33, 150, 243, 0.2) 100%);
+            border-color: rgba(33, 150, 243, 0.6);
+        }
+
+        .sample-option-btn.record {
+            border-color: rgba(76, 175, 80, 0.4);
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.2) 0%, rgba(76, 175, 80, 0.1) 100%);
+        }
+
+        .sample-option-btn.record:hover {
+            background: linear-gradient(135deg, rgba(76, 175, 80, 0.3) 0%, rgba(76, 175, 80, 0.2) 100%);
+            border-color: rgba(76, 175, 80, 0.6);
+        }
+
+        .sample-option-icon {
+            font-size: 24px;
+            margin-right: 8px;
+        }
+
+        /* Folder selector */
+        .folder-selector {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: left;
+        }
+
+        .folder-selector-label {
+            display: block;
+            font-size: 12px;
+            color: #999;
+            margin-bottom: 8px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .folder-selector-display {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(63, 81, 181, 0.1);
+            padding: 10px;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent-color);
+        }
+
+        .folder-selector-icon {
+            font-size: 18px;
+            color: var(--accent-color);
+        }
+
+        .folder-selector-path {
+            flex: 1;
+            font-size: 13px;
+            color: #f0f0f0;
+            word-break: break-all;
+        }
+
+        .folder-selector-btn {
+            padding: 8px 12px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 11px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .folder-selector-btn:hover {
+            background: #3a4dc9;
+            transform: translateY(-1px);
+        }
+
+        /* ========== MIDI SETTINGS BUTTON & MODAL ========== */
+        .midi-settings-btn {
+            background: linear-gradient(145deg, #2a2a3e, #1a1a2e) !important;
+            border: 1px solid #3a3a4e !important;
+            font-size: 18px !important;
+            padding: 8px 12px !important;
+        }
+
+        .midi-settings-btn:hover {
+            background: linear-gradient(145deg, #3a3a4e, #2a2a3e) !important;
+            transform: translateY(-1px);
+        }
+
+        .midi-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.2s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .midi-modal-content {
+            background: linear-gradient(145deg, #1e1e2e, #16161e);
+            border: 2px solid #3a3a4e;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .midi-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            border-bottom: 2px solid #2a2a3e;
+            background: linear-gradient(145deg, #2a2a3e, #1e1e2e);
+        }
+
+        .midi-modal-header h3 {
+            margin: 0;
+            color: #fff;
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .midi-modal-close {
+            background: none;
+            border: none;
+            color: #fff;
+            font-size: 28px;
+            cursor: pointer;
+            padding: 0;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .midi-modal-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: rotate(90deg);
+        }
+
+        .midi-modal-body {
+            padding: 20px;
+        }
+
+        .midi-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            border: 1px solid #2a2a3e;
+        }
+
+        .midi-section h4 {
+            margin: 0 0 10px 0;
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .midi-device-list {
+            margin-top: 10px;
+        }
+
+        .midi-status {
+            color: #888;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .midi-device {
+            background: rgba(0, 255, 100, 0.1);
+            border: 1px solid rgba(0, 255, 100, 0.3);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 8px;
+            color: #0f0;
+            font-size: 14px;
+        }
+
+        .midi-btn {
+            background: linear-gradient(145deg, #2a2a3e, #1a1a2e);
+            border: 1px solid #3a3a4e;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .midi-btn:hover {
+            background: linear-gradient(145deg, #3a3a4e, #2a2a3e);
+            transform: translateY(-1px);
+        }
+
+        .midi-btn.active {
+            background: linear-gradient(145deg, #0a8, #085);
+            border-color: #0c9;
+            box-shadow: 0 0 10px rgba(0, 200, 100, 0.3);
+        }
+
+        .midi-hint {
+            color: #888;
+            font-size: 12px;
+            margin: 8px 0 0 0;
+            line-height: 1.4;
+        }
+
+        .latency-display {
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 6px;
+            border: 1px solid #2a2a3e;
+        }
+
+        .latency-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            color: #fff;
+            font-size: 14px;
+        }
+
+        .latency-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .latency-value {
+            font-weight: 600;
+            font-family: monospace;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .latency-value.good {
+            color: #0f0;
+            background: rgba(0, 255, 0, 0.1);
+        }
+
+        .latency-value.okay {
+            color: #fa0;
+            background: rgba(255, 170, 0, 0.1);
+        }
+
+        .latency-value.high {
+            color: #f44;
+            background: rgba(255, 68, 68, 0.1);
+        }
+    </style>
+    <!-- Arrangement-specific styles for LFO/Automation popup -->
+    <link rel="stylesheet" href="./arrangement_styles/lfo_automation_tabs.css">
+</head>
+<body>
+    <!-- Loading Progress Overlay -->
+    <div id="loading-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.85); z-index: 10000; justify-content: center; align-items: center;">
+        <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 30px 40px; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); text-align: center; min-width: 400px;">
+            <div style="font-size: 24px; font-weight: bold; color: #fff; margin-bottom: 15px;">
+                <span id="loading-title">Loading Project...</span>
+            </div>
+            <div style="font-size: 14px; color: rgba(255,255,255,0.9); margin-bottom: 20px;">
+                <span id="loading-status">Please wait...</span>
+            </div>
+            <div style="background: rgba(0,0,0,0.3); border-radius: 10px; height: 25px; overflow: hidden; margin-bottom: 10px;">
+                <div id="loading-progress-bar" style="height: 100%; background: linear-gradient(90deg, #00ff88, #00ffff); width: 0%; transition: width 0.3s ease; border-radius: 10px; box-shadow: 0 0 20px rgba(0,255,136,0.5);"></div>
+            </div>
+            <div style="font-size: 12px; color: rgba(255,255,255,0.7);">
+                <span id="loading-progress-text">0%</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="arrangement-header">
+        <!-- Left Section: Play, Stop, Bar Counter, Tempo -->
+        <div class="arrangement-header-left">
+            <div class="arrangement-controls">
+                <button id="arr-play" class="arr-btn arr-play-btn">Play</button>
+                <button id="arr-stop" class="arr-btn arr-stop-btn">Stop</button>
+            </div>
+            <div class="arr-tempo-display" style="display: flex; align-items: center; gap: 8px; background: rgba(255, 255, 255, 0.1); padding: 6px 10px; border-radius: 6px;">
+                <span style="color: #fff; font-weight: 600;">Bar: <span id="arr-current-bar">1</span></span>
+                <label style="margin: 0; color: #fff; font-weight: 600;">BPM:</label>
+                <input type="range" id="arr-bpm-slider" min="40" max="1000" value="120" step="1" style="width: 100px; cursor: pointer;">
+                <span id="arr-tempo-value" style="min-width: 35px; text-align: right; font-weight: bold; color: #fff;">120</span>
+            </div>
+        </div>
+
+        <!-- Left Section: File Menu -->
+        <div class="arrangement-header-left">
+            <div class="file-menu-container">
+                <button id="arr-file-menu-btn" class="arr-btn" style="background: #333; color: #fff; font-size: 14px;">📋 File</button>
+                <div id="arr-file-menu" class="file-menu-dropdown" style="display: none;">
+                    <div class="file-menu-item" id="arr-menu-save">💾 Save</div>
+                    <div class="file-menu-item" id="arr-menu-load">📂 Load</div>
+                    <div class="file-menu-item" id="arr-menu-export">📤 Export to MP3</div>
+                    <div class="file-menu-item" id="arr-menu-export-wav">📤 Export to WAV</div>
+                    <hr style="margin: 5px 0; border: none; border-top: 1px solid #555;">
+                    <div class="file-menu-item" id="arr-menu-exit">🚪 Exit</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Section: Title -->
+        <div class="arrangement-title">
+            Psychological Studio<br><p style="font-size: 10px !important;">by Psypower</p>
+        </div>
+
+        <!-- Right Section: Undo/Redo, Back, Clear -->
+        <div class="arrangement-header-right">
+            <button id="midiSettingsBtn" class="arr-btn midi-settings-btn" title="MIDI Settings">🎹</button>
+            <button id="undo-btn" class="arr-btn" title="Undo (Ctrl+Z)" onclick="if(window.undoManager) window.undoManager.undo()" style="opacity: 0.5;" disabled>
+                ↶ Undo
+            </button>
+            <button id="redo-btn" class="arr-btn" title="Redo (Ctrl+Y)" onclick="if(window.undoManager) window.undoManager.redo()" style="opacity: 0.5;" disabled>
+                ↷ Redo
+            </button>
+            <button id="arr-back" class="arr-btn arr-back-btn">← Back to Studio</button>
+            <button id="arr-clear" class="arr-btn arr-danger">Clear</button>
+        </div>
+    </div>
+
+    <div class="arrangement-toolbar">
+        <div class="toolbar-row">
+            <div class="arr-tool-group">
+                <label class="arr-tool-label">Sample Folder:</label>
+                <button id="arr-select-folder" class="arr-btn" style="background: #FF9800; padding: 6px 12px; font-size: 13px;">📁 Select Folder</button>
+                <span id="arr-current-folder" style="margin-left: 10px; color: #ccc; font-size: 12px;">Default</span>
+            </div>
+            <div class="arr-tool-group">
+                <label class="arr-tool-label">Add Sample:</label>
+                <select id="arr-sample-select" class="arr-select">
+                    <option value="">-- Select Sample --</option>
+                </select>
+                <button id="arr-new-sample" class="arr-btn arr-new-sample-btn">New</button>
+            </div>
+            <div class="arr-tool-group">
+                <label class="arr-tool-label">Add Pattern:</label>
+                <select id="arr-pattern-select" class="arr-select">
+                    <option value="">-- Select Pattern --</option>
+                </select>
+                <button id="arr-new-pattern" class="arr-btn arr-new-pattern-btn">New</button>
+            </div>
+        </div>
+        <button id="arr-add-track" class="arr-btn" style="padding: 6px 12px; font-size: 13px;">➕ Track</button>
+    </div>
+
+    <!-- Hidden file input for sample upload -->
+    <input type="file" id="arr-sample-file-input" accept="audio/*" style="display: none;">
+
+    <div class="arrangement-workspace">
+        <div class="arrangement-sidebar">
+            <div class="sidebar-timeline-spacer">
+                <div class="edit-mode-group">
+                    <div class="edit-mode-option">
+                        <input type="radio" id="edit-mode-stretch" name="editMode" value="stretch" checked>
+                        <label for="edit-mode-stretch" data-short="S">S</label>
+                    </div>
+                    <div class="edit-mode-option">
+                        <input type="radio" id="edit-mode-trim" name="editMode" value="trim">
+                        <label for="edit-mode-trim" data-short="T">T</label>
+                    </div>
+                    <div class="edit-mode-option">
+                        <input type="radio" id="edit-mode-delete" name="editMode" value="delete">
+                        <label for="edit-mode-delete" data-short="D" style="font-weight:bold;">
+                            <span class="delete-label-full">D</span>
+                            <span class="delete-label-mobile" style="display:none;">D</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="track-headers" id="track-headers">
+                <!-- Track headers will be added here -->
+            </div>
+        </div>
+        <div class="arrangement-main">
+            <div class="timeline-scroll-wrapper" id="timeline-scroll-wrapper">
+                <canvas id="arrangement-timeline" class="arrangement-timeline"></canvas>
+            </div>
+            <div class="arrangement-tracks" id="arrangement-tracks-scroll">
+                <div class="playhead-line" id="playhead-line">
+                    <div class="playhead-handle"></div>
+                </div>
+                <div class="arrangement-tracks-container" id="arrangement-tracks">
+                    <!-- Track lanes will be added here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pattern Editor Popup -->
+    <div class="pattern-popup" id="pattern-popup">
+        <div class="pattern-editor">
+            <!-- Popup Header -->
+            <div class="popup-header">
+                <h3>Pattern Editor</h3>
+                <button class="popup-close-btn" id="pattern-popup-close-btn">×</button>
+            </div>
+            
+            <!-- Popup Content (Everything scrolls together) -->
+            <div class="popup-content">
+                <input type="text" id="pattern-name-input" class="pattern-name-input" placeholder="Pattern Name">
+            
+            <!-- Piano Roll Container -->
+            <div class="piano-roll-container">
+                <!-- Piano Roll Grid Wrapper (scrollable area) -->
+                <div class="piano-roll-grid-wrapper">
+                    <!-- Bar Numbers -->
+                    <div class="piano-roll-bar-numbers" id="piano-roll-bar-numbers"></div>
+                    
+                    <!-- Scrollable Grid Area -->
+                    <div class="piano-roll-scrollable" id="piano-roll-scrollable">
+                        <!-- Piano Keys (Note Names) -->
+                        <div class="piano-keys" id="piano-keys"></div>
+                        
+                        <!-- Grid Container -->
+                        <div class="piano-roll-grid-container">
+                            <div class="piano-roll-grid" id="piano-roll-grid"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Controls -->
+                <div class="piano-roll-controls">
+                    <div class="piano-roll-controls-row">
+                        <!-- Sound Source -->
+                        <div class="piano-roll-sound-source">
+                            <label>Sound:</label>
+                            <select id="piano-roll-sound-source">
+                                <option value="sample">Sample</option>
+                                <option value="synth">Synth</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Grid Size -->
+                        <div class="piano-roll-grid-size">
+                            <label>Grid:</label>
+                            <button id="piano-roll-grid-decrease">-</button>
+                            <span id="piano-roll-grid-display">16</span>
+                            <button id="piano-roll-grid-increase">+</button>
+                        </div>
+                        
+                        <!-- Note Length -->
+                        <div class="piano-roll-note-length">
+                            <label>Length:</label>
+                            <button id="piano-roll-note-decrease">-</button>
+                            <span id="piano-roll-note-display">1/4</span>
+                            <button id="piano-roll-note-increase">+</button>
+                        </div>
+                        
+                        <!-- Preview/Stop/Clear -->
+                        <div class="piano-roll-preview-controls">
+                            <button id="piano-roll-preview-btn">▶ Preview</button>
+                            <button id="piano-roll-stop-btn">⏹ Stop</button>
+                        </div>
+                        
+                        <button id="piano-roll-clear-btn" class="piano-roll-clear-btn">Clear</button>
+                        
+                        <!-- Delete Mode -->
+                        <div class="piano-roll-delete-mode" style="display: inline-flex; align-items: center; margin-left: 10px;">
+                            <input type="checkbox" id="piano-roll-delete-mode" style="margin: 0; margin-right: 5px;">
+                            <label for="piano-roll-delete-mode" style="margin: 0; cursor: pointer; font-size: 14px;">Delete</label>
+                        </div>
+                        
+                        <!-- Visualizer -->
+                        <canvas id="piano-roll-visualizer" class="piano-roll-visualizer" width="200" height="60"></canvas>
+                    </div>
+                </div>
+                
+                <!-- Sound Design Controls (Synth) -->
+                <div class="sound-design-controls" id="sound-design-controls" style="display:none;">
+                    <h4>Sound Design</h4>
+                    
+                    <!-- MASTER VOLUME -->
+                    <div class="sd-row" style="background: rgba(76, 175, 80, 0.15); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                        <h5 style="margin: 0 0 8px 0; color: #81C784;">Master Volume</h5>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Volume</label>
+                            <input type="range" id="sd-master-volume" min="0" max="100" value="70" step="1">
+                            <span id="sd-master-volume-val">70%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- OSCILLATORS CONTAINER -->
+                    <div class="sd-row" style="background: rgba(33, 150, 243, 0.08); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                        <h5 style="margin: 0 0 8px 0; color: #64B5F6;">Oscillators</h5>
+                        
+                        <!-- OSCILLATOR 1 -->
+                        <div style="background: rgba(33, 150, 243, 0.08); padding: 8px; border-radius: 4px; margin-bottom: 8px;">
+                            <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px; margin-bottom: 8px;">
+                                <label style="color: #64B5F6; font-weight: bold;">Oscillator 1 Waveform</label>
+                                <select id="sd-osc1-wave" style="background-color:#333;color:#fff;border:1px solid #555;border-radius:4px;padding:5px;">
+                                    <option value="sine">Sine</option>
+                                    <option value="square">Square</option>
+                                    <option value="triangle">Triangle</option>
+                                    <option value="sawtooth">Sawtooth</option>
+                                    <option value="custom">Custom (PWM)</option>
+                                </select>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label>Level</label>
+                                <input type="range" id="sd-osc1-level" min="0" max="100" value="50" step="1">
+                                <span id="sd-osc1-level-val">50%</span>
+                            </div>
+                            <br>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label>Detune (cents)</label>
+                                <input type="range" id="sd-osc1-detune" min="-1200" max="1200" value="0" step="1">
+                                <span id="sd-osc1-detune-val">0c</span>
+                            </div>
+                            <br>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label>Octave</label>
+                                <input type="range" id="sd-osc1-octave" min="-3" max="3" value="0" step="1">
+                                <span id="sd-osc1-octave-val">0</span>
+                            </div>
+                            <br>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label>Phase</label>
+                                <input type="range" id="sd-osc1-phase" min="0" max="360" value="0" step="1">
+                                <span id="sd-osc1-phase-val">0°</span>
+                            </div>
+                        </div>
+                        
+                        <!-- OSCILLATOR 2 -->
+                        <div style="background: rgba(33, 150, 243, 0.08); padding: 8px; border-radius: 4px;">
+                            <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px; margin-bottom: 8px;">
+                                <label style="color: #64B5F6; font-weight: bold;">Oscillator 2 Waveform</label>
+                                <select id="sd-osc2-wave" style="background-color:#333;color:#fff;border:1px solid #555;border-radius:4px;padding:5px;">
+                                    <option value="sine">Sine</option>
+                                    <option value="square">Square</option>
+                                    <option value="triangle">Triangle</option>
+                                    <option value="sawtooth" selected>Sawtooth</option>
+                                    <option value="custom">Custom (PWM)</option>
+                                </select>
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label>Level</label>
+                                <input type="range" id="sd-osc2-level" min="0" max="100" value="50" step="1">
+                                <span id="sd-osc2-level-val">50%</span>
+                            </div>
+                            <br>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label>Detune (cents)</label>
+                                <input type="range" id="sd-osc2-detune" min="-1200" max="1200" value="0" step="1">
+                                <span id="sd-osc2-detune-val">0c</span>
+                            </div>
+                            <br>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label>Octave</label>
+                                <input type="range" id="sd-osc2-octave" min="-3" max="3" value="0" step="1">
+                                <span id="sd-osc2-octave-val">0</span>
+                            </div>
+                            <br>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label>Phase</label>
+                                <input type="range" id="sd-osc2-phase" min="0" max="360" value="0" step="1">
+                                <span id="sd-osc2-phase-val">0°</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    
+                    <!-- UNISON (Supersaw/Superunison) -->
+                    <div class="sd-row" style="background: rgba(156, 39, 176, 0.15); padding: 10px; border-radius: 6px;">
+                        <h5 style="margin: 0 0 8px 0; color: #BA68C8;">Unison (Supersaw)</h5>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Voices</label>
+                            <input type="range" id="sd-unison-voices" min="1" max="8" value="1" step="1">
+                            <span id="sd-unison-voices-val">1</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Detune Spread</label>
+                            <input type="range" id="sd-unison-detune" min="0" max="100" value="20" step="1">
+                            <span id="sd-unison-detune-val">20c</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Pan Spread</label>
+                            <input type="range" id="sd-unison-pan" min="0" max="100" value="50" step="1">
+                            <span id="sd-unison-pan-val">50%</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <!-- PWM (Pulse Width Modulation) -->
+                    <div class="sd-row" style="background: rgba(255, 152, 0, 0.15); padding: 10px; border-radius: 6px;">
+                        <h5 style="margin: 0 0 8px 0; color: #FFB74D;">PWM (Pulse Width Modulation)</h5>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Enable</label>
+                            <input type="checkbox" id="sd-pwm-enable" style="width: 20px; height: 20px; cursor: pointer;">
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Rate</label>
+                            <input type="range" id="sd-pwm-rate" min="0.1" max="10" value="0.5" step="0.1">
+                            <span id="sd-pwm-rate-val">0.5 Hz</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Depth</label>
+                            <input type="range" id="sd-pwm-depth" min="0" max="100" value="50" step="1">
+                            <span id="sd-pwm-depth-val">50%</span>
+                        </div>
+                    </div>
+                    <br>
+                    
+                    <!-- FILTER CONTAINER -->
+                    <div class="sd-row" style="background: rgba(255, 193, 7, 0.15); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                        <h5 style="margin: 0 0 8px 0; color: #FFD54F;">Filter</h5>
+                        <div style="display:flex;flex-direction:column;align-items:flex-start;gap:6px; margin-bottom: 8px;">
+                            <label style="color: #FFD54F; font-weight: bold;">Filter Type</label>
+                            <select id="sd-filter-type" style="background-color:#333;color:#fff;border:1px solid #555;border-radius:4px;padding:5px;">
+                                <option value="lowpass">Low Pass</option>
+                                <option value="highpass">High Pass</option>
+                                <option value="bandpass">Band Pass</option>
+                                <option value="notch">Notch</option>
+                                <option value="allpass">All Pass</option>
+                                <option value="peaking">Peaking</option>
+                            </select>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Cutoff</label>
+                            <input type="range" id="sd-filter-cutoff" min="20" max="20000" value="2000" step="1">
+                            <span id="sd-filter-cutoff-val">2000 Hz</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Resonance</label>
+                            <input type="range" id="sd-filter-res" min="0" max="100" value="0" step="1">
+                            <span id="sd-filter-res-val">0</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Filter Envelope Amount</label>
+                            <input type="range" id="sd-filter-env-amount" min="-100" max="100" value="0" step="1">
+                            <span id="sd-filter-env-amount-val">0%</span>
+                        </div>
+                    </div>
+                    
+                    <!-- ENVELOPE CONTAINER -->
+                    <div class="sd-row" style="background: rgba(244, 67, 54, 0.15); padding: 10px; border-radius: 6px; margin-bottom: 10px;">
+                        <h5 style="margin: 0 0 8px 0; color: #EF5350;">Envelope (ADSR)</h5>
+                        
+                        <!-- ADSR Visual Canvas -->
+                        <canvas id="adsr-canvas" style="width: 100%; height: 200px; background: #1a1a1a; border: 1px solid #444; border-radius: 4px; cursor: crosshair; display: block; margin-bottom: 15px;"></canvas>
+                        
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Attack</label>
+                            <input type="range" id="sd-env-attack" min="0" max="2000" value="10" step="1">
+                            <span id="sd-env-attack-val">10 ms</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Decay</label>
+                            <input type="range" id="sd-env-decay" min="0" max="4000" value="100" step="1">
+                            <span id="sd-env-decay-val">100 ms</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Sustain</label>
+                            <input type="range" id="sd-env-sustain" min="0" max="100" value="70" step="1">
+                            <span id="sd-env-sustain-val">70%</span>
+                        </div>
+                        <br>
+                        <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                            <label>Release</label>
+                            <input type="range" id="sd-env-release" min="0" max="4000" value="200" step="1">
+                            <span id="sd-env-release-val">200 ms</span>
+                        </div>
+                        <br>
+                        
+                        <!-- Envelope to Pitch Modulation -->
+                        <div style="border-top: 1px solid rgba(244, 67, 54, 0.3); padding-top: 10px; margin-top: 10px;">
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between; margin-bottom: 8px;">
+                                <h5 style="margin: 0; font-size: 13px; color: #EF5350;">Envelope → Pitch Modulation</h5>
+                                <input type="checkbox" id="sd-env-pitch-enable" style="width: 18px; height: 18px; cursor: pointer;">
+                            </div>
+                            <div style="display:flex;align-items:center;gap:8px;justify-content:space-between">
+                                <label style="font-size: 12px;">Amount (semitones)</label>
+                                <input type="range" id="sd-env-pitch-amount" min="-24" max="24" step="1" value="0">
+                                <span id="sd-env-pitch-amount-val" style="min-width: 45px; text-align: right;">0</span>
+                            </div>
+                            <div style="margin-top: 6px; font-size: 10px; color: #888; text-align: center;">
+                                Modulates pitch over envelope (creates pitch bends, kicks, toms, etc.)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LFO SECTION FOR PIANO ROLL -->
+            <div class="effect-section lfo-section" id="piano-roll-lfo-section" style="display:none;">
+                <hr color="grey">
+                <br>
+                <h4>LFO MODULATORS</h4>
+                
+                <!-- LFO Tabs -->
+                <div class="lfo-tabs">
+                    <button class="lfo-tab active" data-pr-lfo="1">LFO 1</button>
+                    <button class="lfo-tab" data-pr-lfo="2">LFO 2</button>
+                    <button class="lfo-tab" data-pr-lfo="3">LFO 3</button>
+                    <button class="lfo-tab" data-pr-lfo="4">LFO 4</button>
+                </div>
+                
+                <!-- LFO Panels -->
+                <div class="lfo-panel active" id="pr-lfo-panel-1">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="pr-lfo-1-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="osc1-detune">Osc 1 Detune</option>
+                            <option value="osc2-detune">Osc 2 Detune</option>
+                            <option value="filter-cutoff">Filter Cutoff</option>
+                            <option value="filter-resonance">Filter Resonance</option>
+                            <option value="env-attack">Envelope Attack</option>
+                            <option value="env-decay">Envelope Decay</option>
+                            <option value="env-sustain">Envelope Sustain</option>
+                            <option value="env-release">Envelope Release</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="pr-lfo-1-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="pr-lfo-1-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="pr-lfo-1-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="pr-lfo-1-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="pr-lfo-1-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="pr-lfo-1-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="pr-lfo-panel-2">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="pr-lfo-2-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="osc1-detune">Osc 1 Detune</option>
+                            <option value="osc2-detune">Osc 2 Detune</option>
+                            <option value="filter-cutoff">Filter Cutoff</option>
+                            <option value="filter-resonance">Filter Resonance</option>
+                            <option value="env-attack">Envelope Attack</option>
+                            <option value="env-decay">Envelope Decay</option>
+                            <option value="env-sustain">Envelope Sustain</option>
+                            <option value="env-release">Envelope Release</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="pr-lfo-2-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="pr-lfo-2-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="pr-lfo-2-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="pr-lfo-2-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="pr-lfo-2-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="pr-lfo-2-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="pr-lfo-panel-3">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="pr-lfo-3-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="osc1-detune">Osc 1 Detune</option>
+                            <option value="osc2-detune">Osc 2 Detune</option>
+                            <option value="filter-cutoff">Filter Cutoff</option>
+                            <option value="filter-resonance">Filter Resonance</option>
+                            <option value="env-attack">Envelope Attack</option>
+                            <option value="env-decay">Envelope Decay</option>
+                            <option value="env-sustain">Envelope Sustain</option>
+                            <option value="env-release">Envelope Release</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="pr-lfo-3-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="pr-lfo-3-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="pr-lfo-3-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="pr-lfo-3-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="pr-lfo-3-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="pr-lfo-3-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="pr-lfo-panel-4">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="pr-lfo-4-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="osc1-detune">Osc 1 Detune</option>
+                            <option value="osc2-detune">Osc 2 Detune</option>
+                            <option value="filter-cutoff">Filter Cutoff</option>
+                            <option value="filter-resonance">Filter Resonance</option>
+                            <option value="env-attack">Envelope Attack</option>
+                            <option value="env-decay">Envelope Decay</option>
+                            <option value="env-sustain">Envelope Sustain</option>
+                            <option value="env-release">Envelope Release</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="pr-lfo-4-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="pr-lfo-4-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="pr-lfo-4-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="pr-lfo-4-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="pr-lfo-4-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="pr-lfo-4-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            </div><!-- Close popup-content -->
+            
+            <div class="pattern-buttons">
+                <button id="pattern-cancel-btn" class="arr-btn">Cancel</button>
+                <button id="pattern-save-btn" class="arr-btn arr-save-btn">Save Pattern</button>
+                <button id="pattern-save-midi-btn" class="arr-btn arr-save-midi-btn">Save as MIDI</button>
+                <button id="pattern-save-sample-btn" class="arr-btn arr-save-sample-btn">Save as Sample</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Menu for Clips -->
+    <div id="clip-context-menu" class="context-menu">
+        <div class="context-menu-item" data-action="delete">Delete</div>
+        <div class="context-menu-item" data-action="effects">Effects</div>
+        <div class="context-menu-item" data-action="edit" style="display:none;">Edit Pattern</div>
+        <div class="context-menu-item" data-action="color">
+            <span>Color</span>
+            <input type="color" id="clip-color-picker" style="width: 30px; height: 20px; margin-left: 10px; border: none; cursor: pointer;">
+        </div>
+    </div>
+
+    <!-- Effects Popup (Complete with LFOs & Automations) -->
+    <div id="arr-effects-popup" class="effects-popup">
+        <div class="popup-header">
+            <h3>Effects for <span id="arr-popup-clip-name">Clip</span></h3>
+            <button class="popup-close-btn" id="arr-effects-close-btn">Close</button>
+        </div>
+        
+        <!-- WAVEFORM PREVIEW SECTION -->
+        <div class="effects-waveform-container">
+            <canvas id="arr-effects-waveform-canvas" class="effects-waveform-canvas"></canvas>
+            <div class="waveform-time-labels">
+                <span id="arr-waveform-time-current">0:00</span>
+                <span id="arr-waveform-time-duration">0:00</span>
+            </div>
+        </div>
+        
+        <div class="popup-content">
+            
+            <!-- VOLUME SECTION -->
+            <div class="effect-section">
+                <h4>VOLUME</h4>
+                <div class="slider-container">
+                    <label>Gain</label>
+                    <input type="range" id="arr-sample-volume" min="0" max="200" value="100" step="1">
+                    <span id="arr-sample-volume-value">100%</span>
+                </div>
+            </div>
+
+            <!-- SPEED SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>SPEED</h4>
+                <div class="speed-selector">
+                    <label for="arr-speed-select">Speed:</label>
+                    <select id="arr-speed-select">
+                        <option value="0.03125">0.03125x</option>
+                        <option value="0.0625">0.0625x</option>
+                        <option value="0.125">0.125x</option>
+                        <option value="0.25">0.25x</option>
+                        <option value="0.5">0.5x</option>
+                        <option value="1" selected>1x</option>
+                        <option value="1.5">1.5x</option>
+                        <option value="2">2x</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- DELAY SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>DELAY</h4>
+                <div class="slider-container">
+                    <label>Time (ms)</label>
+                    <input type="range" id="arr-delay-time" min="0" max="1000" value="0" step="10">
+                    <span id="arr-delay-time-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Feedback (%)</label>
+                    <input type="range" id="arr-delay-feedback" min="0" max="100" value="0" step="1">
+                    <span id="arr-delay-feedback-value">0</span>
+                </div>
+            </div>
+
+            <!-- REVERB SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>REVERB</h4>
+                <div class="slider-container">
+                    <label>Decay (s)</label>
+                    <input type="range" id="arr-reverb-decay" min="0.1" max="5" value="0" step="0.1">
+                    <span id="arr-reverb-decay-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Pre-delay (ms)</label>
+                    <input type="range" id="arr-reverb-predelay" min="0" max="100" value="0" step="1">
+                    <span id="arr-reverb-predelay-value">0</span>
+                </div>
+                <div class="slider-container">
+                    <label>Diffusion (%)</label>
+                    <input type="range" id="arr-reverb-diffusion" min="0" max="100" value="50" step="1">
+                    <span id="arr-reverb-diffusion-value">50</span>
+                </div>
+                <div class="slider-container">
+                    <label>Low Cut (Hz)</label>
+                    <input type="range" id="arr-reverb-lowcut" min="20" max="1000" value="20" step="10">
+                    <span id="arr-reverb-lowcut-value">20</span>
+                </div>
+                <div class="slider-container">
+                    <label>High Cut (Hz)</label>
+                    <input type="range" id="arr-reverb-highcut" min="1000" max="20000" value="20000" step="100">
+                    <span id="arr-reverb-highcut-value">20000</span>
+                </div>
+                <div class="slider-container">
+                    <label>Damping (%)</label>
+                    <input type="range" id="arr-reverb-damping" min="0" max="100" value="50" step="1">
+                    <span id="arr-reverb-damping-value">50</span>
+                </div>
+                <div class="slider-container">
+                    <label>Wet/Dry (%)</label>
+                    <input type="range" id="arr-reverb-mix" min="0" max="100" value="0" step="1">
+                    <span id="arr-reverb-mix-value">0</span>
+                </div>
+            </div>
+
+            <!-- EQUALIZER SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>EQUALIZER</h4>
+                <div class="eq-controls">
+                    <div style="position: relative; width: 100%; height: 300px; background: #0a0a0a; border: 2px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+                        <canvas id="arr-eq-canvas" style="width: 100%; height: 100%; display: block;"></canvas>
+                    </div>
+                    <div style="margin-top: 10px; text-align: center; font-size: 12px; color: #888;">
+                        <p>Click/drag to add or move EQ points</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FILTER SECTION -->
+            <div class="effect-section">
+                <hr color="grey">
+                <br>
+                <h4>FILTER</h4>
+                <div class="slider-container">
+                    <label>Type</label>
+                    <select id="arr-filter-type">
+                        <option value="none">None</option>
+                        <option value="lowpass">Low Pass</option>
+                        <option value="highpass">High Pass</option>
+                        <option value="bandpass">Band Pass</option>
+                        <option value="notch">Notch</option>
+                    </select>
+                </div>
+                <div class="slider-container">
+                    <label>Cutoff (Hz)</label>
+                    <input type="range" id="arr-filter-cutoff" min="20" max="20000" value="1000" step="10">
+                    <span id="arr-filter-cutoff-value">1000</span>
+                </div>
+                <div class="slider-container">
+                    <label>Resonance</label>
+                    <input type="range" id="arr-filter-resonance" min="0" max="30" value="0" step="0.1">
+                    <span id="arr-filter-resonance-value">0</span>
+                </div>
+            </div>
+
+            <!-- LFO SECTION -->
+            <div class="effect-section lfo-section">
+                <hr color="grey">
+                <br>
+                <h4>LFO MODULATORS</h4>
+                
+                <!-- LFO Tabs -->
+                <div class="lfo-tabs">
+                    <button class="lfo-tab active" data-lfo="1">LFO 1</button>
+                    <button class="lfo-tab" data-lfo="2">LFO 2</button>
+                    <button class="lfo-tab" data-lfo="3">LFO 3</button>
+                    <button class="lfo-tab" data-lfo="4">LFO 4</button>
+                </div>
+                
+                <!-- LFO Panels -->
+                <div class="lfo-panel active" id="arr-lfo-panel-1">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-1-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-1-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-1-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-1-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-1-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-1-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-1-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-2">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-2-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-2-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-2-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-2-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-2-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-2-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-2-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-3">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-3-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-3-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-3-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-3-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-3-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-3-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-3-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+
+                <div class="lfo-panel" id="arr-lfo-panel-4">
+                    <div class="lfo-control">
+                        <label>Target:</label>
+                        <select id="arr-lfo-4-target" class="lfo-target">
+                            <option value="none">-- None --</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="volume">Volume</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Waveform:</label>
+                        <select id="arr-lfo-4-waveform" class="lfo-waveform">
+                            <option value="sine">Sine</option>
+                            <option value="square">Square</option>
+                            <option value="triangle">Triangle</option>
+                            <option value="sawtooth">Sawtooth</option>
+                        </select>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Rate (Hz):</label>
+                        <input type="range" id="arr-lfo-4-rate" class="lfo-rate" min="0.1" max="20" value="1" step="0.1">
+                        <span id="arr-lfo-4-rate-value" class="lfo-rate-value">1.0</span>
+                    </div>
+                    <div class="lfo-control">
+                        <label>Depth (%):</label>
+                        <input type="range" id="arr-lfo-4-depth" class="lfo-depth" min="0" max="100" value="0" step="1">
+                        <span id="arr-lfo-4-depth-value" class="lfo-depth-value">0%</span>
+                    </div>
+                    <div class="lfo-visualizer">
+                        <canvas class="lfo-wave" id="arr-lfo-4-wave" width="300" height="60"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AUTOMATION SECTION -->
+            <div class="effect-section automation-section">
+                <hr color="grey">
+                <br>
+                <h4>AUTOMATION</h4>
+                
+                <!-- Automation Tabs -->
+                <div class="automation-tabs">
+                    <button class="automation-tab active" data-automation="1">Auto 1</button>
+                    <button class="automation-tab" data-automation="2">Auto 2</button>
+                    <button class="automation-tab" data-automation="3">Auto 3</button>
+                    <button class="automation-tab" data-automation="4">Auto 4</button>
+                </div>
+                
+                <!-- Automation Panels -->
+                <div class="automation-panel active" id="arr-automation-panel-1">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-1-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-1-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-1-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-1-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-1-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-1-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-1-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-1-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-1-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-2">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-2-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-2-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-2-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-2-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-2-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-2-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-2-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-2-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-2-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-3">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-3-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-3-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-3-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-3-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-3-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-3-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-3-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-3-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-3-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+
+                <div class="automation-panel" id="arr-automation-panel-4">
+                    <div class="automation-control">
+                        <label>Target:</label>
+                        <select id="arr-automation-4-target" class="automation-target">
+                            <option value="none">-- None --</option>
+                            <option value="volume">Volume</option>
+                            <option value="pitch">Pitch</option>
+                            <option value="speed">Speed</option>
+                            <option value="filter">Filter Cutoff</option>
+                            <option value="delay-time">Delay Time</option>
+                            <option value="delay-feedback">Delay Feedback</option>
+                            <option value="reverb-mix">Reverb Mix</option>
+                            <option value="pan">Panning</option>
+                        </select>
+                    </div>
+                    <div class="automation-control">
+                        <label>Start Value:</label>
+                        <input type="range" id="arr-automation-4-start" class="automation-start" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-4-start-value" class="automation-start-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>End Value:</label>
+                        <input type="range" id="arr-automation-4-end" class="automation-end" min="0" max="100" value="50" step="1">
+                        <span id="arr-automation-4-end-value" class="automation-end-value">50</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Duration (bars):</label>
+                        <input type="range" id="arr-automation-4-duration" class="automation-duration" min="1" max="32" value="1" step="1">
+                        <span id="arr-automation-4-duration-value" class="automation-duration-value">1</span>
+                    </div>
+                    <div class="automation-control">
+                        <label>Curve:</label>
+                        <select id="arr-automation-4-curve" class="automation-curve">
+                            <option value="linear">Linear</option>
+                            <option value="exponential">Exponential</option>
+                            <option value="logarithmic">Logarithmic</option>
+                        </select>
+                    </div>
+                    <div class="automation-visualizer">
+                        <canvas class="automation-canvas" id="arr-automation-4-canvas" width="300" height="100"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FOOTER BUTTONS -->
+            <div class="popup-footer">
+                <button id="arr-effects-apply-btn" class="arr-btn-apply">Apply</button>
+                <button id="arr-effects-reset-btn" class="arr-btn-reset">Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== BEAUTIFUL POPUPS ========== -->
+    
+    <!-- Save Success Popup -->
+    <div class="popup-overlay" id="save-popup-overlay">
+        <div class="popup-container">
+            <div class="popup-header">
+                <h2>Save Successful</h2>
+                <button class="popup-close-btn" onclick="closeSavePopup()">×</button>
+            </div>
+            <div class="popup-body">
+                <div class="popup-success-icon">✅</div>
+                <p><strong>Your arrangement has been saved!</strong></p>
+                <div class="popup-content-summary">
+                    <div><strong>Clips:</strong> <span id="save-popup-clips">0</span></div>
+                    <div><strong>Custom Samples:</strong> <span id="save-popup-samples">0</span></div>
+                    <div><strong>MIDI Patterns:</strong> <span id="save-popup-patterns">0</span></div>
+                </div>
+                <p style="font-size: 12px; color: #999; margin-top: 15px;">File has been downloaded to your downloads folder.</p>
+            </div>
+            <div class="popup-footer">
+                <button class="popup-btn popup-btn-primary" onclick="closeSavePopup()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Load Success Popup -->
+    <div class="popup-overlay" id="load-popup-overlay">
+        <div class="popup-container">
+            <div class="popup-header">
+                <h2>Load Successful</h2>
+                <button class="popup-close-btn" onclick="closeLoadPopup()">×</button>
+            </div>
+            <div class="popup-body">
+                <div class="popup-success-icon">📂</div>
+                <p><strong>Your arrangement has been loaded!</strong></p>
+                <div class="popup-content-summary">
+                    <div><strong>Clips:</strong> <span id="load-popup-clips">0</span></div>
+                    <div><strong>Custom Samples:</strong> <span id="load-popup-samples">0</span></div>
+                    <div><strong>MIDI Patterns:</strong> <span id="load-popup-patterns">0</span></div>
+                </div>
+                <p style="font-size: 12px; color: #999; margin-top: 15px;">All data has been restored and is ready to use.</p>
+            </div>
+            <div class="popup-footer">
+                <button class="popup-btn popup-btn-primary" onclick="closeLoadPopup()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Success Popup -->
+    <div class="popup-overlay" id="export-success-popup-overlay">
+        <div class="popup-container">
+            <div class="popup-header">
+                <h2>Export Successful</h2>
+                <button class="popup-close-btn" onclick="closeExportSuccessPopup()">×</button>
+            </div>
+            <div class="popup-body">
+                <div class="popup-success-icon">✅</div>
+                <p><strong>Your arrangement has been exported!</strong></p>
+                <div class="popup-content-summary">
+                    <div><strong>Format:</strong> <span id="export-popup-format">WAV</span></div>
+                    <div><strong>Location:</strong></div>
+                    <div style="font-size: 12px; color: #aaa; word-break: break-all; margin-top: 5px;">
+                        <span id="export-popup-path">arrangement.wav</span>
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: #999; margin-top: 15px;">File has been saved to your chosen location.</p>
+            </div>
+            <div class="popup-footer">
+                <button class="popup-btn popup-btn-primary" onclick="closeExportSuccessPopup()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- New Sample Dialog -->
+    <div class="popup-overlay" id="new-sample-overlay">
+        <div class="popup-container new-sample-dialog">
+            <div class="popup-header">
+                <h2>Create New Sample</h2>
+                <button class="popup-close-btn" onclick="closeNewSampleDialog()">×</button>
+            </div>
+            <div class="popup-body">
+                <p>Choose how you'd like to create a new sample:</p>
+                <div class="sample-options">
+                    <button class="sample-option-btn upload" id="new-sample-upload-btn">
+                        <span class="sample-option-icon">📁</span>Upload Audio File
+                    </button>
+                    <button class="sample-option-btn record" id="new-sample-record-btn">
+                        <span class="sample-option-icon">🎤</span>Record from Microphone
+                    </button>
+                </div>
+            </div>
+            <div class="popup-footer">
+                <button class="popup-btn popup-btn-secondary" onclick="closeNewSampleDialog()">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Folder Selector Popup -->
+    <div class="popup-overlay" id="folder-selector-overlay">
+        <div class="popup-container">
+            <div class="popup-header">
+                <h2>Select Sample Folder</h2>
+                <button class="popup-close-btn" onclick="closeFolderSelector()">×</button>
+            </div>
+            <div class="popup-body">
+                <p>Choose a folder to load samples from. This folder will be used to import audio files for your arrangements.</p>
+                <div class="folder-selector">
+                    <div class="folder-selector-label">📁 Current Folder:</div>
+                    <div class="folder-selector-display">
+                        <span class="folder-selector-icon">📂</span>
+                        <span class="folder-selector-path" id="folder-selector-path">No folder selected</span>
+                    </div>
+                </div>
+                <p style="font-size: 12px; color: #999;">Note: Web browsers have limited access to the file system. You can only use samples you upload or record directly in the app.</p>
+            </div>
+            <div class="popup-footer">
+                <button class="popup-btn popup-btn-secondary" onclick="closeFolderSelector()">Cancel</button>
+                <button class="popup-btn popup-btn-primary" id="folder-selector-confirm-btn" onclick="confirmFolderSelection()">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MIDI Settings Modal -->
+    <div id="midiModal" class="midi-modal" style="display: none;">
+        <div class="midi-modal-content">
+            <div class="midi-modal-header">
+                <h3>MIDI & Performance Settings</h3>
+                <button class="midi-modal-close">&times;</button>
+            </div>
+            <div class="midi-modal-body">
+                <!-- MIDI Device Status -->
+                <div class="midi-section">
+                    <h4>MIDI Devices</h4>
+                    <div id="midiDeviceList" class="midi-device-list">
+                        <p class="midi-status">No MIDI devices detected</p>
+                    </div>
+                </div>
+
+                <!-- Performance Mode -->
+                <div class="midi-section">
+                    <h4>Performance Mode</h4>
+                    <button id="performanceModeBtn" class="midi-btn">Enable Performance Mode</button>
+                    <p class="midi-hint">Preloads all samples for zero-latency playback</p>
+                </div>
+
+                <!-- Metronome -->
+                <div class="midi-section">
+                    <h4>Metronome</h4>
+                    <button id="metronomeBtn" class="midi-btn">Enable Metronome</button>
+                    <p class="midi-hint">Beat-synced click track with downbeat emphasis</p>
+                </div>
+
+                <!-- Latency Monitor -->
+                <div class="midi-section">
+                    <h4>Latency Monitor</h4>
+                    <button id="latencyMonitorBtn" class="midi-btn">Show Latency Monitor</button>
+                    <div id="latencyDisplay" class="latency-display" style="display: none;">
+                        <div class="latency-item">
+                            <span>Audio Latency:</span>
+                            <span id="audioLatency" class="latency-value">--ms</span>
+                        </div>
+                        <div class="latency-item">
+                            <span>Input Latency:</span>
+                            <span id="inputLatency" class="latency-value">--ms</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- MIDI Note Mapping Info -->
+                <div class="midi-section">
+                    <h4>MIDI Note Mapping</h4>
+                    <p class="midi-hint">C3 (MIDI 48) → Sample 1<br>Notes map sequentially up to Sample 32</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Production Logger (MUST BE FIRST) -->
+    <script src="./production-logger.js"></script>
+    
+    <!-- Professional DAW Systems -->
+    <script src="./error-handler.js"></script>
+    <script src="./notification-system.js"></script>
+    <script src="./keyboard-shortcuts.js"></script>
+    <script src="./undo-redo-system.js"></script>
+    <script src="./auto-save-system.js"></script>
+    <script src="./performance-monitor.js"></script>
+    <script src="./performance-optimizer.js"></script>
+    <script src="./loading-states.js"></script>
+    <script src="./crash-recovery-system.js"></script>
+    
+    <!-- Core Application Scripts -->
+    <script src="./electron-nav.js"></script>
+    <script src="./folder-management.js"></script>
+    <script src="./folder-audio-loader.js"></script>
+    <script src="./arrangement-export.js"></script>
+    <script src="./arrangement.js"></script>
+    <script>
+        // Initialize export button and professional systems when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                if (typeof initExportButton === 'function') {
+                    initExportButton();
+                }
+            }, 500);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,88 @@
+name: Build macOS DMG (Automated)
+
+on:
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type'
+        required: false
+        default: 'release'
+
+jobs:
+  build-macos:
+    runs-on: macos-latest
+    
+    steps:
+      - name: 📥 Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      
+      - name: 📦 Install dependencies
+        run: npm install --legacy-peer-deps
+      
+      - name: Verify icon.png
+        run: |
+          if [ -f "icon.png" ]; then
+            echo "✅ icon.png found - electron-builder will convert it automatically"
+            ls -lh icon.png
+            file icon.png
+          else
+            echo "⚠️ No icon.png found - using default icon"
+          fi
+      
+      - name: 🏗️ Build macOS DMG
+        run: npm run build-mac
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: false
+      
+      - name: 📊 Get build info
+        id: build_info
+        run: |
+          DMG_FILE=$(find dist -name "*.dmg" | head -n 1)
+          if [ -f "$DMG_FILE" ]; then
+            DMG_SIZE=$(du -h "$DMG_FILE" | cut -f1)
+            echo "dmg_path=$DMG_FILE" >> $GITHUB_OUTPUT
+            echo "dmg_size=$DMG_SIZE" >> $GITHUB_OUTPUT
+            echo "✅ Build successful!"
+            echo "📦 File: $DMG_FILE"
+            echo "📊 Size: $DMG_SIZE"
+          else
+            echo "❌ No DMG file found"
+            exit 1
+          fi
+      
+      - name: 📤 Upload DMG
+        uses: actions/upload-artifact@v4
+        with:
+          name: Psychological-Studio-macOS-${{ github.run_number }}
+          path: dist/*.dmg
+          retention-days: 90
+      
+      - name: 📤 Upload .app (for testing)
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: Psychological-Studio-App-${{ github.run_number }}
+          path: dist/mac-universal/*.app
+          retention-days: 7
+      
+      - name: 🎉 Build summary
+        run: |
+          echo "### ✅ macOS Build Successful! 🎉" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**DMG File:** \`${{ steps.build_info.outputs.dmg_path }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "**Size:** ${{ steps.build_info.outputs.dmg_size }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### 📦 Features:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Universal Binary (Intel + Apple Silicon)" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Complete file management" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Cross-platform projects" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ Smooth performance" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "#### 📥 Download:" >> $GITHUB_STEP_SUMMARY
+          echo "Go to **Actions → This workflow → Artifacts** to download the DMG" >> $GITHUB_STEP_SUMMARY
