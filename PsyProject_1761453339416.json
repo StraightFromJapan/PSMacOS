@@ -1,0 +1,90 @@
+{
+  "version": "3.0",
+  "tracks": [
+    {
+      "name": "Track 1",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 2",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 3",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 4",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 5",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 6",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 7",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 8",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 9",
+      "muted": false,
+      "solo": false
+    },
+    {
+      "name": "Track 10",
+      "muted": false,
+      "solo": false
+    }
+  ],
+  "clips": [
+    {
+      "id": 1761453310983,
+      "trackIndex": 0,
+      "startBar": 0,
+      "type": "sample",
+      "data": "custom_Who Cut Your Head Off-.mp3",
+      "isFromFolder": false,
+      "length": 250,
+      "originalLength": 250,
+      "stretchedLength": 250,
+      "trimStart": 0,
+      "stretchMode": false,
+      "effects": {},
+      "automation": {},
+      "lfo": {},
+      "audioSource": {
+        "type": "custom",
+        "sampleKey": "custom_Who Cut Your Head Off-.mp3"
+      }
+    }
+  ],
+  "patterns": {},
+  "pianoRollData": {},
+  "tempo": 120,
+  "zoom": 1.3566564042139901,
+  "customSamplePaths": {
+    "custom_Who Cut Your Head Off-.mp3": "C:\\Users\\psypo\\Downloads\\Who Cut Your Head Off\\Who Cut Your Head Off-.mp3"
+  },
+  "midiPatterns": {},
+  "folderState": {
+    "currentFolderPath": null,
+    "currentFolderFiles": [],
+    "folderSamplesLoaded": false
+  }
+}
